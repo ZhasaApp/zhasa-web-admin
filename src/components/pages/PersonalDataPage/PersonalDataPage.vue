@@ -1,7 +1,7 @@
 <template>
   <div class="content-body">
     <a href="/roles">
-      <img src="@/assets/icon-back-arrow.svg" alt="bak button"/>
+      <img src="../../../assets/icon-back-arrow.svg" alt="bak button"/>
       <span>Вернуться к списку</span>
     </a>
     <div class="personal-data-body">
@@ -16,7 +16,7 @@
           <input id="telephoneNumber" placeholder="" type="text" v-model="telephoneNumber"/>
         </div>
       </div>
-      <img class="divider-line" src="@/assets/divider-line.svg" alt="divider-line"/>
+      <img class="divider-line" src="../../../assets/divider-line.svg" alt="divider-line"/>
       <h3>Другое</h3>
       <div class="personal-data-body-first personal-data-body-second">
         <div class="input-wrapper">
@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="footer-section">
-        <img class="divider-line" src="@/assets/divider-line.svg" alt="divider-line"/>
+        <img class="divider-line" src="../../../assets/divider-line.svg" alt="divider-line"/>
         <div class="footer-btns">
           <CustomButton
               :additional-styles="{padding : '16px 0', border: '2px solid #999', background: 'none', color: '#999'}"

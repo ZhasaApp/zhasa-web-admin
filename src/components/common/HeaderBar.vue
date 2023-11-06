@@ -4,7 +4,7 @@
       <img src="../../assets/icon-search.svg" class="search-icon" alt="Search">
       <input type="text" placeholder="Поиск"/>
     </div>
-    <CustomButton @click="modalToggler">{{isCreate ? "Создать" : "Добавить"}}</CustomButton>
+    <CustomButton @click="$emit('modalToggler')">{{isCreate ? "Создать" : "Добавить"}}</CustomButton>
   </div>
 </template>
 
@@ -17,11 +17,6 @@ export default defineComponent({
   name: 'HeaderBar',
   components: {CustomButton},
   props: {
-    modalToggler: {
-      type: Function,
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      default: () => {}
-    },
     isCreate: {
       type: Boolean,
       default: false

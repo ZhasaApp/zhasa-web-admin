@@ -4,7 +4,7 @@
       class="customButton"
       :style="{ ...additionalStyles }"
       :disabled = "disabled"
-      @click="callback">
+      @click="$emit('modalToggler')">
     <slot></slot>
   </button>
 </template>
@@ -21,8 +21,7 @@ export default defineComponent({
       type: Object,
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       default: () => {},
-    },
-    callback: () => void {}
+    }
   },
 });
 </script>

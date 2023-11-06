@@ -1,10 +1,10 @@
 <template>
   <div class="content-body">
-    <HeaderBar :modalToggler="toggleModal"/>
+    <HeaderBar @click="modalToggler"/>
     <TableData/>
     <AddManagerRoleModal
         :modalActive="modalActive"
-        :toggleModal="toggleModal"
+        :toggleModal="modalToggler"
         @addManager="onAddRole"
         :branches="branches"
         :brands="brands"
@@ -58,7 +58,7 @@ export default defineComponent({
         .catch(error => console.log(error));
   },
   methods: {
-    toggleModal () {
+    modalToggler () {
       this.modalActive = !this.modalActive;
     },
     onAddRole(data: any) {
@@ -87,7 +87,7 @@ export default defineComponent({
             }
             console.log(data)
             localStorage.setItem('ff', 'dd')
-            this.toggleModal()
+            this.modalToggler()
             setTimeout(() => {
               this.showAlert = true;
               setTimeout(() => {

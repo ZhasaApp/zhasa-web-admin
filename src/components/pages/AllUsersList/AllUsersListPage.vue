@@ -1,9 +1,9 @@
 <template>
   <div class="content-body">
-    <HeaderBar :modalToggler="toggleModal" :isCreate="true"/>
+    <HeaderBar @click="modalToggler" :isCreate="true"/>
     <TableData/>
   </div>
-  <CreatUserModal :modalActive="modalActive" :toggleModal="toggleModal" @createUser="onCreateUser" :errorMessage="errorMessage"/>
+  <CreatUserModal :modalActive="modalActive" :toggleModal="modalToggler" @createUser="onCreateUser" :errorMessage="errorMessage"/>
   <a-alert
       v-if="showAlert"
       message="Новый пользователь успешно создан"
@@ -32,7 +32,7 @@ export default defineComponent({
     }
   },
   methods: {
-    toggleModal () {
+    modalToggler () {
       this.modalActive = !this.modalActive;
     },
     onCreateUser(dataBody: any) {
@@ -59,7 +59,7 @@ export default defineComponent({
             localStorage.setItem('createdUserId', JSON.stringify(data?.id));
             localStorage.setItem('createdUserName', dataBody.firstName);
             localStorage.setItem('createdUserLastName', dataBody.lastName);
-            this.toggleModal()
+            this.modalToggler()
             setTimeout(() => {
               this.showAlert = true;
               setTimeout(() => {
