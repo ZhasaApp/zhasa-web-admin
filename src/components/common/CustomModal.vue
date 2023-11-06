@@ -11,17 +11,11 @@
   </transition>
 </template>
 
-<script>
+<script lang="ts">
 
 export default {
   components: {},
-  props: ["modalActive", "modalTitle", "onSuccessButton"],
-  setup(props, {emit}) {
-    const close = () => {
-      emit("close");
-    };
-    return {close};
-  },
+  props: ["modalActive", "modalTitle", "onSuccessButton"]
 };
 </script>
 

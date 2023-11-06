@@ -27,10 +27,6 @@
 
 <script lang="ts">
 import {defineComponent} from 'vue';
-interface Props {
-  title: string;
-  content: string;
-}
 
 export default defineComponent({
   name: 'TableData',

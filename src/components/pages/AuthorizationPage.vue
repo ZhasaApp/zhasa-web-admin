@@ -1,11 +1,11 @@
 <template>
   <div class="authorizationContainer">
-    <img src="@/assets/logo-zhasa.svg" alt="Logo">
-    <form @submit="handleSubmit">
+    <img src="../../assets/logo-zhasa.svg" alt="Logo">
+    <form>
       <div class="formContent">
         <h2>Авторизация</h2>
         <div class="inputsContainer">
-          <input type="text" v-model="username" placeholder="+7 _ _ _  _ _  _ _">
+          <input type="text" placeholder="+7 _ _ _  _ _  _ _">
           <div class="passwordInput">
             <input
                 :type="showPassword ? 'text' : 'password'"
@@ -20,7 +20,7 @@
         <CustomButton>Войти</CustomButton>
       </div>
     </form>
-    <div class="error-message" v-if="error">{{ "error" }}</div>
+    <div class="error-message">{{ "error" }}</div>
     <p class="footerText">2023</p>
   </div>
 </template>

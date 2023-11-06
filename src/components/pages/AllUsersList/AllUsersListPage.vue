@@ -3,7 +3,7 @@
     <HeaderBar :modalToggler="toggleModal" :isCreate="true"/>
     <TableData/>
   </div>
-  <CreatUserModal :modalActive="modalActive" :toggleModal="toggleModal" @createUser="onCreateUser" :errorMessage="this.errorMessage"/>
+  <CreatUserModal :modalActive="modalActive" :toggleModal="toggleModal" @createUser="onCreateUser" :errorMessage="errorMessage"/>
   <a-alert
       v-if="showAlert"
       message="Новый пользователь успешно создан"
@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import {defineComponent} from 'vue';
 import CreatUserModal from "./CreatUserModal.vue";
 import {TOKEN} from "../../../constants/constants.ts";
 import TableData from "../../common/TableData.vue";

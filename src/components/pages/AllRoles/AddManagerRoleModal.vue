@@ -15,7 +15,7 @@
             show-search
             placeholder="Выберите филиал"
             style="width: 100%; margin: 24px auto"
-            :options="branches?.map(branch => ({
+            :options="branches?.map((branch: any) => ({
               label: branch.description.toString(),
               value: branch.id.toString() ,
               }))"
@@ -28,7 +28,7 @@
             show-search
             placeholder="Выберите бренд"
             class="selector-with_multiple-select"
-            :options="brands?.map(branch => ({
+            :options="brands?.map((branch: any) => ({
               label: branch.title.toString(),
               value: branch.id.toString() ,
               }))"

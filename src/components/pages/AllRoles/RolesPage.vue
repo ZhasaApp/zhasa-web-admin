@@ -22,7 +22,7 @@
 
 <script lang="ts">
 
-import {defineComponent, ref} from 'vue';
+import {defineComponent} from 'vue';
 import AddManagerRoleModal from "./AddManagerRoleModal.vue";
 import TableData from "../../common/TableData.vue";
 import HeaderBar from "../../common/HeaderBar.vue";
@@ -72,7 +72,7 @@ export default defineComponent({
             {
               user_id: parseInt(this.userId),
               branch_id: parseInt(data.selectedBranchId),
-              brands: Array.from<string>(data.selectedBrandsIds).map((item: string, index: number) => parseInt(item))
+              brands: Array.from<string>(data.selectedBrandsIds).map((item: string) => parseInt(item))
             })
       }
       fetch('http://185.182.219.90/admin/manager', requestOptions)
