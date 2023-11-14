@@ -4,11 +4,15 @@
       <form @submit.prevent="onCreateButtonClick">
         <a-select
             v-model="selectedUserId"
-            :defaultValue="{key: '3', label: selectedUserFullName}"
+            :options="users?.map((user: any) => ({
+                label: `${user.FirstName} ${user.LastName}`,
+                value: user.Id ,
+                }))"
             show-search
             placeholder="Напишите или выберите пользователя"
             style="width: 100%"
             :filter-option="filterOption"
+            @change="handleUserChange"
         ></a-select>
         <a-select
             v-model="selectedBranchId"
@@ -59,6 +63,7 @@
 import {defineComponent, PropType} from "vue";
 import CustomButton from "../../common/CustomButton.vue";
 import CustomModal from "../../common/CustomModal.vue";
+import useAllUsersWithoutRole from "../../../hooks/useAllUsersWithoutRole.ts";
 
 export default defineComponent({
   components: {CustomButton, CustomModal},
@@ -81,7 +86,7 @@ export default defineComponent({
   },
   data() {
     return {
-      selectedUserId: this.selectedUserFullName,
+      selectedUserId: '',
       selectedBranchId: '',
       selectedBrandsIds: [],
       isAllDataEntered: false,
@@ -94,10 +99,19 @@ export default defineComponent({
     const filterOption = (input: string, option: any) => {
       return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
-    return {handleChange, filterOption}
+
+    const {users, isLoading} = useAllUsersWithoutRole()
+    return {handleChange, filterOption, users, isLoading}
 
   },
   methods: {
+    handleUserChange(value: any) {
+      this.selectedUserId = value;
+      console.log("value", value)
+      if (this.selectedBranchId.length > 0 && this.selectedBrandsIds.length > 0) {
+        this.isAllDataEntered = true
+      } else this.isAllDataEntered = false
+    },
     handleBranchChange(value: any) {
       this.selectedBranchId = value;
       if (this.selectedBranchId.length > 0 && this.selectedBrandsIds.length > 0) {

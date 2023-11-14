@@ -50,7 +50,7 @@
 <script lang="ts">
 import {defineComponent, ref} from 'vue';
 import CustomButton from "../../common/CustomButton.vue";
-import {TOKEN} from "../../../constants/constants.ts";
+import {TOKEN} from "../../constants.ts";
 
 export default defineComponent({
   name: 'PersonalDataPage',

@@ -1,7 +1,7 @@
 <template>
   <div class="content-body">
     <HeaderBar @click="modalToggler" :isCreate="true"/>
-    <TableData/>
+    <TableData v-if="!isLoading" :tableData="usersTableData" :columns="tableColumns"/>
   </div>
   <CreatUserModal :modalActive="modalActive" :toggleModal="modalToggler" @createUser="onCreateUser" :errorMessage="errorMessage"/>
   <a-alert
@@ -14,11 +14,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {computed, defineComponent} from 'vue';
 import CreatUserModal from "./CreatUserModal.vue";
-import {TOKEN} from "../../../constants/constants.ts";
+import {TOKEN} from "../../constants.ts";
 import TableData from "../../common/TableData.vue";
 import HeaderBar from "../../common/HeaderBar.vue";
+import useAllUsersWithRoles from "../../../hooks/useAllUsersWithRoles.ts";
 
 export default defineComponent({
   name: 'AllUsersListPage',
@@ -28,7 +29,36 @@ export default defineComponent({
       modalActive: false,
       createdUserId: '',
       errorMessage: '',
-      showAlert: false
+      showAlert: false,
+    }
+  },
+  setup() {
+    const {users, isLoading} = useAllUsersWithRoles();
+    const usersTableData = computed(() => {
+      if (!users.value || isLoading.value) {
+        return [];
+      }
+
+      return users.value.map((user: any) => {
+        return {
+          id: user.id,
+          fullName: `${user.first_name} ${user.last_name}`,
+          branchTitle: user.branch_title,
+          brands: user.brands
+        };
+      });
+    });
+
+    const tableColumns = [
+      {key: 'id', label: 'ID'},
+      {key: 'fullName', label: 'ФИО'},
+      {key: 'telephoneNumber', label: 'Номер телефона'},
+    ]
+    return {
+      tableColumns,
+      usersTableData,
+      isLoading,
+      users
     }
   },
   methods: {
@@ -56,9 +86,6 @@ export default defineComponent({
               return Promise.reject(error);
             }
             this.createdUserId = data;
-            localStorage.setItem('createdUserId', JSON.stringify(data?.id));
-            localStorage.setItem('createdUserName', dataBody.firstName);
-            localStorage.setItem('createdUserLastName', dataBody.lastName);
             this.modalToggler()
             setTimeout(() => {
               this.showAlert = true;

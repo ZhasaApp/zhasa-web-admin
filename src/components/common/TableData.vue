@@ -4,21 +4,21 @@
       <table class="custom-table">
         <thead>
         <tr>
-          <th>ID</th>
-          <th>ФИО</th>
-          <th>Номер телефона</th>
-          <th></th>
+          <th v-for="(column, index) in columns" :key="index" :style="{minWidth: index==0 ? '86px' : '306px'}">
+            {{ column.label }}
+          </th>
+          <th :style="{width: '86px'}"></th>
         </tr>
         </thead>
         <tbody>
-<!--        <tr v-for="item in tableData" :key="item.id">-->
-<!--          <td>{{ item.id }}</td>-->
-<!--          <td>{{ item.fullName }}</td>-->
-<!--          <td>{{ item.telephoneNumber }}</td>-->
-<!--          <td>-->
-<!--              <img src="@/assets/icon-edit-pen.svg" alt="Edit Pen" @click="openEditModal(item.id)">-->
-<!--          </td>-->
-<!--        </tr>-->
+        <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
+          <td v-for="(column, columnIndex) in columns" :key="columnIndex">
+            {{ row[column.key] }}
+          </td>
+          <td>
+            <img src="../../assets/icon-edit-pen.svg" alt="Edit Pen" @click="openEditModal('1')">
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -26,25 +26,31 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, PropType} from 'vue';
+interface TableColumn {
+  key: string;
+  label: string;
+}
 
+interface TableRow {
+  [key: string]: any;
+}
 export default defineComponent({
   name: 'TableData',
-  data() {
-    return {
-      tableData: [
-        { id: 1, fullName: 'John Doe', telephoneNumber: '1234567890' },
-        { id: 2, fullName: 'Jane Smith Jane SmithJane thJane Smith', telephoneNumber: '9876543210' },
-        // Add more data as needed
-      ]
-    };
+  props: {
+    tableData: {
+      type: Array as PropType<TableRow[]>,
+      required: true,
+    },
+    columns: {
+      type: Array as PropType<TableColumn[]>,
+      required: true,
+    },
   },
   methods: {
     openEditModal(id: number) {
-      // Logic to open the edit modal based on the ID
-      // You can use a store, emit an event, or other approaches
       console.log('Open edit modal for ID:', id);
-    }
+    },
   }
 });
 </script>
@@ -56,6 +62,7 @@ export default defineComponent({
   border-radius: 12px;
   box-shadow: 0px 2px 9px 2px rgba(134, 134, 134, 0.10);
 }
+
 .table-container {
   border-radius: 12px;
   overflow-x: auto;
@@ -67,13 +74,33 @@ export default defineComponent({
   width: 100%;
   table-layout: auto;
   border-collapse: collapse;
+
+  th {
+    color: #999;
+    padding: 24px 24px 16px 24px;
+    box-sizing: content-box;
+  }
+
+  td {
+    color: #333;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+}
+
+thead {
+  padding: 10px;
 }
 
 .custom-table th, .custom-table td {
-  background-color: #FFFFFF;
-  padding: 8px;
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid #ddd;
   white-space: nowrap;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  box-sizing: border-box;
+
 }
 </style>

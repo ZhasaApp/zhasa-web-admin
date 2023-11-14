@@ -1,15 +1,13 @@
 <template>
   <div class="content-body">
     <HeaderBar @click="modalToggler"/>
-    <TableData/>
+    <TableData :tableData="usersTableData" :columns="tableColumns"/>
     <AddManagerRoleModal
         :modalActive="modalActive"
         :toggleModal="modalToggler"
         @addManager="onAddRole"
         :branches="branches"
-        :brands="brands"
-        :selectedUserFullName='userSurname+ " " +userName'
-    />
+        :brands="brands"/>
   </div>
   <a-alert
       v-if="showAlert"
@@ -22,12 +20,12 @@
 
 <script lang="ts">
 
-import {defineComponent} from 'vue';
+import {computed, defineComponent} from 'vue';
 import AddManagerRoleModal from "./AddManagerRoleModal.vue";
 import TableData from "../../common/TableData.vue";
 import HeaderBar from "../../common/HeaderBar.vue";
-import {TOKEN} from "../../../constants/constants.ts";
-
+import {TOKEN} from "../../constants.ts";
+import useAllUsersWithRoles from "../../../hooks/useAllUsersWithRoles.ts";
 export default defineComponent({
   name: 'RolesPage',
   components: {AddManagerRoleModal, TableData, HeaderBar},
@@ -35,9 +33,6 @@ export default defineComponent({
     return {
       branches: [],
       brands: [],
-      userId: localStorage.getItem('createdUserId') || '',
-      userName: localStorage.getItem('createdUserName'),
-      userSurname: localStorage.getItem('createdUserLastName'),
       modalActive: false,
       errorMessage: '',
       showAlert: false
@@ -57,8 +52,36 @@ export default defineComponent({
         .then(data => this.brands = data?.result)
         .catch(error => console.log(error));
   },
+  setup() {
+    const {users, isLoading} =  useAllUsersWithRoles();
+    const usersTableData = computed(() => {
+      if (!users.value || isLoading.value) {
+        return [];
+      }
+
+      return users.value.map((user: any) => {
+        return {
+          id: user.id,
+          fullName: `${user.first_name} ${user.last_name}`,
+          branchTitle: user.branch_title,
+          brands: user.brands
+        };
+      });
+    });
+    const tableColumns = [
+      {key: 'id', label: 'ID'},
+      {key: 'fullName', label: 'ФИО'},
+      {key: 'branchTitle', label: 'Филиал'},
+      {key: 'brands', label: 'Бренд'},
+    ]
+    return {
+      usersTableData,
+      tableColumns,
+      isLoading
+    }
+  },
   methods: {
-    modalToggler () {
+    modalToggler() {
       this.modalActive = !this.modalActive;
     },
     onAddRole(data: any) {
@@ -70,7 +93,7 @@ export default defineComponent({
         },
         body: JSON.stringify(
             {
-              user_id: parseInt(this.userId),
+              user_id: parseInt(data.selectedUserId),
               branch_id: parseInt(data.selectedBranchId),
               brands: Array.from<string>(data.selectedBrandsIds).map((item: string) => parseInt(item))
             })
@@ -86,7 +109,6 @@ export default defineComponent({
               return Promise.reject(error);
             }
             console.log(data)
-            localStorage.setItem('ff', 'dd')
             this.modalToggler()
             setTimeout(() => {
               this.showAlert = true;
@@ -107,7 +129,8 @@ export default defineComponent({
 .content-body {
   padding-top: 24px;
 }
-.success-alert{
+
+.success-alert {
   position: absolute;
   max-width: 590px;
   width: 80%;
