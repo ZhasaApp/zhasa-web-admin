@@ -5,6 +5,7 @@
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "types": ["@types/vue", "@types/vuex", "@types/vuetify"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",

@@ -12,13 +12,17 @@
     "ant-design-vue": "^4.0.6",
     "axios": "^1.6.0",
     "core-js": "^3.8.3",
+    "lodash": "^4.17.21",
+    "lodash.debounce": "^4.0.8",
     "maska": "^2.1.10",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5",
     "vue-select": "^4.0.0-beta.6",
-    "vue3-select-option-search": "^0.0.6"
+    "vue3-select-option-search": "^0.0.6",
+    "vuetify": "^3.4.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.201",
     "@vitejs/plugin-vue": "^4.2.3",
     "sass": "^1.69.5",
     "typescript": "^5.0.2",

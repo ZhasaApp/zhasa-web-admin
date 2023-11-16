@@ -1,7 +1,17 @@
 <template>
   <div class="content-body">
-    <HeaderBar @click="modalToggler"/>
-    <TableData :tableData="usersTableData" :columns="tableColumns"/>
+    <HeaderBar
+        @modalToggler="modalToggler"
+        :handleSearch="handleSearch"
+    />
+    <TableData
+        :tableData="usersTableData"
+        :columns="tableColumns"
+        @handlePageChange="fetching"
+        :totalCount="totalCount"
+        :size="size"
+        :searchValue="searchValue"
+    />
     <AddManagerRoleModal
         :modalActive="modalActive"
         :toggleModal="modalToggler"
@@ -20,7 +30,7 @@
 
 <script lang="ts">
 
-import {computed, defineComponent} from 'vue';
+import {computed, defineComponent, ref, watch} from 'vue';
 import AddManagerRoleModal from "./AddManagerRoleModal.vue";
 import TableData from "../../common/TableData.vue";
 import HeaderBar from "../../common/HeaderBar.vue";
@@ -53,12 +63,12 @@ export default defineComponent({
         .catch(error => console.log(error));
   },
   setup() {
-    const {users, isLoading} =  useAllUsersWithRoles();
+    const searchValue = ref('');
+    const {users, isLoading, fetching, totalCount, size} =  useAllUsersWithRoles();
     const usersTableData = computed(() => {
       if (!users.value || isLoading.value) {
         return [];
       }
-
       return users.value.map((user: any) => {
         return {
           id: user.id,
@@ -74,10 +84,21 @@ export default defineComponent({
       {key: 'branchTitle', label: 'Филиал'},
       {key: 'brands', label: 'Бренд'},
     ]
+    const handleSearch = (value:any) => {
+      searchValue.value = value;
+    };
+    watch(searchValue, (searchValue) => {
+      fetching(1, searchValue)
+    });
     return {
       usersTableData,
       tableColumns,
-      isLoading
+      isLoading,
+      totalCount,
+      size,
+      fetching,
+      handleSearch,
+      searchValue
     }
   },
   methods: {

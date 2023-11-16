@@ -2,16 +2,16 @@
   <div class="header-body">
     <div class="input-wrapper">
       <img src="../../assets/icon-search.svg" class="search-icon" alt="Search">
-      <input type="text" placeholder="Поиск"/>
+      <input type="text" placeholder="Поиск" v-model="inputValue" @input="handleInput(inputValue)"/>
     </div>
     <CustomButton @click="$emit('modalToggler')">{{isCreate ? "Создать" : "Добавить"}}</CustomButton>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
+import {defineComponent, ref} from 'vue';
+import { debounce } from 'lodash';
 import CustomButton from "./CustomButton.vue";
-
 
 export default defineComponent({
   name: 'HeaderBar',
@@ -20,12 +20,31 @@ export default defineComponent({
     isCreate: {
       type: Boolean,
       default: false
-    }
-    // content: {
-    //   type: String,
-    //   required: true,
-    // },
+    },
+    handleSearch: {
+      type: Function,
+      required: true,
+    },
   },
+  data(){
+  },
+  setup(props){
+    const inputValue = ref('');
+
+    const debouncedSearch = debounce((value: string) => {
+      props.handleSearch(value);
+    }, 700);
+
+    const handleInput = (value: string) => {
+      inputValue.value = value;
+      debouncedSearch(value);
+    };
+
+    return {
+      inputValue,
+      handleInput,
+    };
+  }
 });
 </script>
 

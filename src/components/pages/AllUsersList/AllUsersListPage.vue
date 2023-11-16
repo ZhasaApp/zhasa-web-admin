@@ -1,9 +1,26 @@
 <template>
   <div class="content-body">
-    <HeaderBar @click="modalToggler" :isCreate="true"/>
-    <TableData v-if="!isLoading" :tableData="usersTableData" :columns="tableColumns"/>
+    <HeaderBar
+        @modalToggler="modalToggler"
+        :handleSearch="handleSearch"
+        :isCreate="true"
+    />
+    <TableData
+        v-if="!isLoading"
+        :tableData="usersTableData"
+        :columns="tableColumns"
+        @handlePageChange="fetching"
+        :totalCount="totalCount"
+        :size="size"
+        :searchValue="searchValue"
+    />
   </div>
-  <CreatUserModal :modalActive="modalActive" :toggleModal="modalToggler" @createUser="onCreateUser" :errorMessage="errorMessage"/>
+  <CreatUserModal
+      :modalActive="modalActive"
+      :toggleModal="modalToggler"
+      @createUser="onCreateUser"
+      :errorMessage="errorMessage"
+  />
   <a-alert
       v-if="showAlert"
       message="Новый пользователь успешно создан"
@@ -20,6 +37,7 @@ import {TOKEN} from "../../constants.ts";
 import TableData from "../../common/TableData.vue";
 import HeaderBar from "../../common/HeaderBar.vue";
 import useAllUsersWithRoles from "../../../hooks/useAllUsersWithRoles.ts";
+import {ref, watch} from 'vue'
 
 export default defineComponent({
   name: 'AllUsersListPage',
@@ -33,7 +51,8 @@ export default defineComponent({
     }
   },
   setup() {
-    const {users, isLoading} = useAllUsersWithRoles();
+    const searchValue = ref('');
+    const {users, isLoading, fetching, totalCount, size} = useAllUsersWithRoles();
     const usersTableData = computed(() => {
       if (!users.value || isLoading.value) {
         return [];
@@ -43,8 +62,8 @@ export default defineComponent({
         return {
           id: user.id,
           fullName: `${user.first_name} ${user.last_name}`,
-          branchTitle: user.branch_title,
-          brands: user.brands
+          phone: `${user.phone.slice(0, 2)} ${user.phone.slice(2, 5)} ${user.phone.slice(5, 8)}
+          ${user.phone.slice(8, 10)} ${user.phone.slice(10)}`
         };
       });
     });
@@ -52,17 +71,28 @@ export default defineComponent({
     const tableColumns = [
       {key: 'id', label: 'ID'},
       {key: 'fullName', label: 'ФИО'},
-      {key: 'telephoneNumber', label: 'Номер телефона'},
+      {key: 'phone', label: 'Номер телефона'},
     ]
+    const handleSearch = (value: any) => {
+      searchValue.value = value;
+    };
+    watch(searchValue, (searchValue) => {
+      fetching(1, searchValue)
+    });
     return {
       tableColumns,
       usersTableData,
       isLoading,
-      users
+      users,
+      totalCount,
+      size,
+      fetching,
+      handleSearch,
+      searchValue
     }
   },
   methods: {
-    modalToggler () {
+    modalToggler() {
       this.modalActive = !this.modalActive;
     },
     onCreateUser(dataBody: any) {
@@ -72,7 +102,11 @@ export default defineComponent({
           'Authorization': TOKEN,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({phone: dataBody.telephoneNumber.replace(/\s/g, ''), first_name: dataBody.firstName,last_name: dataBody.lastName, })
+        body: JSON.stringify({
+          phone: dataBody.telephoneNumber.replace(/\s/g, ''),
+          first_name: dataBody.firstName,
+          last_name: dataBody.lastName,
+        })
       };
       fetch('http://185.182.219.90/admin/user', requestOptions)
           .then(async response => {
@@ -106,7 +140,8 @@ export default defineComponent({
 .content-body {
   padding-top: 24px;
 }
-.success-alert{
+
+.success-alert {
   position: absolute;
   max-width: 590px;
   width: 80%;

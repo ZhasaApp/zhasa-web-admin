@@ -16,17 +16,26 @@
             {{ row[column.key] }}
           </td>
           <td>
-            <img src="../../assets/icon-edit-pen.svg" alt="Edit Pen" @click="openEditModal('1')">
+            <img src="../../assets/icon-edit-pen.svg" alt="Edit Pen">
           </td>
         </tr>
         </tbody>
       </table>
+      <div class="text-center mt-3">
+        <a-pagination
+            v-model:current="currentPage"
+            :total="totalCount"
+            :default-page-size="size"
+            :showSizeChanger="false"
+            @change="$emit('handlePageChange', currentPage, searchValue)"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from 'vue';
+import {defineComponent, PropType, ref, watch} from 'vue';
 interface TableColumn {
   key: string;
   label: string;
@@ -46,11 +55,26 @@ export default defineComponent({
       type: Array as PropType<TableColumn[]>,
       required: true,
     },
+    totalCount : {
+      type: Number
+    },
+    size: {
+      type: Number
+    },
+    searchValue: {
+      type: String
+    }
+  },
+  setup(props){
+    const currentPage = ref(1);
+    watch(() => props.searchValue, () => {
+      currentPage.value = 1;
+    });
+    return{
+      currentPage,
+    }
   },
   methods: {
-    openEditModal(id: number) {
-      console.log('Open edit modal for ID:', id);
-    },
   }
 });
 </script>
@@ -65,7 +89,6 @@ export default defineComponent({
 
 .table-container {
   border-radius: 12px;
-  overflow-x: auto;
 }
 
 .custom-table {
@@ -101,6 +124,5 @@ thead {
   font-weight: 600;
   line-height: normal;
   box-sizing: border-box;
-
 }
 </style>
