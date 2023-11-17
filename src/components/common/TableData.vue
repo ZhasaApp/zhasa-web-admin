@@ -1,5 +1,4 @@
 <template>
-  <div class="table-data">
     <div class="table-container">
       <table class="custom-table">
         <thead>
@@ -21,7 +20,7 @@
         </tr>
         </tbody>
       </table>
-      <div class="text-center mt-3">
+      <div class="table-footer">
         <a-pagination
             v-model:current="currentPage"
             :total="totalCount"
@@ -31,7 +30,6 @@
         />
       </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts">
@@ -80,19 +78,17 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.table-data {
-  margin-top: 16px;
-  margin-bottom: 32px;
-  border-radius: 12px;
-  box-shadow: 0px 2px 9px 2px rgba(134, 134, 134, 0.10);
-}
-
 .table-container {
-  border-radius: 12px;
+  margin-top: 16px;
+  background: none;
+  max-height:calc(100vh - 160px);
+  overflow-x: scroll;
+  overflow-y: scroll;
 }
 
 .custom-table {
   background-color: #FFFFFF;
+  box-shadow: 0px 2px 9px 2px rgba(134, 134, 134, 0.10);
   border-radius: 12px;
   width: 100%;
   table-layout: auto;
@@ -106,6 +102,7 @@ export default defineComponent({
 
   td {
     color: #333;
+    padding-left: 24px;
     padding-top: 14px;
     padding-bottom: 14px;
   }
@@ -116,7 +113,7 @@ thead {
 }
 
 .custom-table th, .custom-table td {
-  text-align: center;
+  text-align: left;
   border-bottom: 1px solid #ddd;
   white-space: nowrap;
   font-size: 16px;
@@ -124,5 +121,11 @@ thead {
   font-weight: 600;
   line-height: normal;
   box-sizing: border-box;
+}
+.table-footer{
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin-bottom: 20px
 }
 </style>

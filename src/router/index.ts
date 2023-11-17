@@ -4,15 +4,15 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
-            path: '/',
+            path: '/zhasa-web-admin',
             component: () => import("../components/pages/AllUsersList/AllUsersListPage.vue")
         },
         {
-            path: '/roles',
+            path: '/zhasa-web-admin/roles',
             component: () => import("../components/pages/AllRoles/RolesPage.vue")
         },
         {
-            path: '/roles/personalData',
+            path: '/zhasa-web-admin/roles/personalData',
             component: () => import("../components/pages/PersonalDataPage/PersonalDataPage.vue")
         }
     ]

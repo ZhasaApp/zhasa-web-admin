@@ -5,6 +5,7 @@
         :handleSearch="handleSearch"
     />
     <TableData
+        v-if="!isLoading"
         :tableData="usersTableData"
         :columns="tableColumns"
         @handlePageChange="fetching"
@@ -12,6 +13,7 @@
         :size="size"
         :searchValue="searchValue"
     />
+    <span v-else>Загрузка ...</span>
     <AddManagerRoleModal
         :modalActive="modalActive"
         :toggleModal="modalToggler"

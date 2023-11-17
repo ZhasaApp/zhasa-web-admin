@@ -14,6 +14,7 @@
         :size="size"
         :searchValue="searchValue"
     />
+    <span v-else>Загрузка ...</span>
   </div>
   <CreatUserModal
       :modalActive="modalActive"

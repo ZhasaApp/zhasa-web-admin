@@ -6,7 +6,7 @@ function useAllUsersWithRoles() {
     const users = ref<any[]>([]);
     const isLoading = ref(true);
     let totalCount = ref(0);
-    const size = 16
+    const size = 15
     const headers = {
         'Authorization': TOKEN,
     };

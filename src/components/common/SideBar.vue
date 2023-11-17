@@ -1,21 +1,20 @@
 <template>
-  <div class="sidebar">
+  <aside class="sidebar">
     <div class="sidebar-header">
       <img src="../../assets/small-logo-zhasa.svg" alt="Logo">
     </div>
-
     <div class="menu">
-      <router-link class="menu-button" to="/">
+      <router-link class="menu-button" to="/zhasa-web-admin">
         <img  src="../../assets/icon-users.svg" class ="users-tab-icon"  alt="users icon">
         <span class="menu-item-text">Пользователи</span>
       </router-link>
 
-      <router-link class="menu-button" to="/roles">
+      <router-link class="menu-button" to="/zhasa-web-admin/roles">
         <img src="../../assets/icon-roles.svg" class="roles-tab-icon" alt="roles icon">
-        <span class="menu-item-text">Роль менджера</span>
+        <span class="menu-item-text">Роль менеджера</span>
       </router-link>
     </div>
-  </div>
+  </aside>
 </template>
 
 <script lang="ts">
