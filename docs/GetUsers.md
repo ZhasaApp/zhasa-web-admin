@@ -8,11 +8,11 @@
 
 ### Query Params
 
-- `page: number` - user list page
-- `size: number` - elements number in one page
-- `role_key: string` - user role: `manager, director, admin`
-- `brand_id: number` - brand id
-- `branch_id: number` - branch id
+- `page: integer` - user list page
+- `size: integer` - elements number in one page
+- `role_keys: Array<string>` - user roles: `manager, director, admin`
+- `brand_ids: Array<integer>` - brand ids
+- `branch_ids: Array<integer>` - branch ids
 - `search: string` - searching text
 
 
