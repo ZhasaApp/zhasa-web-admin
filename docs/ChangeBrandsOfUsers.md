@@ -2,7 +2,7 @@
 
 ## API
 
-- `POST {base_url}/admin/change-users-role`
+- `POST {base_url}/admin/change-users-brands`
 
 ## Request
 
