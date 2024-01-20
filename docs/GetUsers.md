@@ -10,7 +10,7 @@
 
 - `page: integer` - user list page
 - `size: integer` - elements number in one page
-- `role_keys: Array<string>` - user roles: `manager, director, admin`
+- `role_keys: Array<string>` - user roles: `sales_manager, branch_director, owner`
 - `brand_ids: Array<integer>` - brand ids
 - `branch_ids: Array<integer>` - branch ids
 - `search: string` - searching text
