@@ -4,6 +4,9 @@
         @modalToggler="modalToggler"
         :handleSearch="handleSearch"
         :isCreate="true"
+        :brands="brands"
+        :branches="branches"
+        @updateRoles="updateSelectedRoles"
     />
     <TableData
         v-if="!isLoading"
@@ -13,6 +16,7 @@
         :totalCount="totalCount"
         :size="size"
         :searchValue="searchValue"
+        @updateRoles="updateSelectedRoles"
     />
     <span v-else>Загрузка ...</span>
   </div>
@@ -39,49 +43,73 @@ import TableData from "../../common/TableData.vue";
 import HeaderBar from "../../common/HeaderBar.vue";
 import useAllUsersWithRoles from "../../../hooks/useAllUsersWithRoles.ts";
 import {ref, watch} from 'vue'
+import AddManagerRoleModal from "../AllRoles/AddManagerRoleModal.vue";
 
 export default defineComponent({
   name: 'AllUsersListPage',
-  components: {CreatUserModal, TableData, HeaderBar},
+  components: {AddManagerRoleModal, CreatUserModal, TableData, HeaderBar},
   data() {
     return {
+      branches: [],
+      brands: [],
       modalActive: false,
       createdUserId: '',
       errorMessage: '',
       showAlert: false,
     }
   },
+  mounted() {
+    const headers = {
+      'Authorization': TOKEN,
+    };
+    fetch('http://185.182.219.90/admin/branches', {headers})
+        .then(response => response.json())
+        .then(data => this.branches = data?.result)
+        .catch(error => console.log(error));
+
+    fetch('http://185.182.219.90/admin/brands', {headers})
+        .then(response => response.json())
+        .then(data => this.brands = data?.result)
+        .catch(error => console.log(error));
+  },
   setup() {
     const searchValue = ref('');
+    const selectedRoles = ref([]);
+    const updateSelectedRoles = (roles: any) => {
+      selectedRoles.value = roles;
+    };
     const {users, isLoading, fetching, totalCount, size} = useAllUsersWithRoles();
     const usersTableData = computed(() => {
       if (!users.value || isLoading.value) {
         return [];
       }
-
       return users.value.map((user: any) => {
         return {
           id: user.id,
           fullName: `${user.first_name} ${user.last_name}`,
           phone: `${user.phone.slice(0, 2)} ${user.phone.slice(2, 5)} ${user.phone.slice(5, 8)}
-          ${user.phone.slice(8, 10)} ${user.phone.slice(10)}`
+          ${user.phone.slice(8, 10)} ${user.phone.slice(10)}`,
+          branch: `${user.branch_title ?? '-'}`,
+          brand: `${user.brands.join(', ')}`,
+          role: user.role
         };
       });
     });
 
-    const tableColumns = [
-      {key: 'id', label: 'ID'},
-      {key: 'fullName', label: 'ФИО'},
-      {key: 'phone', label: 'Номер телефона'},
-    ]
     const handleSearch = (value: any) => {
       searchValue.value = value;
     };
     watch(searchValue, (searchValue) => {
-      fetching(1, searchValue)
+      console.log('ddd', [])
+      fetching(1, searchValue, [])
     });
+
+    watch(selectedRoles, (selectedRoles) => {
+      console.log('123456', [])
+      fetching(1, searchValue.value, selectedRoles)
+    });
+
     return {
-      tableColumns,
       usersTableData,
       isLoading,
       users,
@@ -89,7 +117,22 @@ export default defineComponent({
       size,
       fetching,
       handleSearch,
-      searchValue
+      searchValue,
+      selectedRoles,
+      updateSelectedRoles,
+      roleOptions: [
+        {text: "Админ", value: "owner"},
+        {text: "Директор", value: "branch_director"},
+        {text: "Менеджер", value: "sales_manager"}
+      ],
+      tableColumns: [
+        {key: 'id', label: 'ID', width: '56px'},
+        {key: 'fullName', label: 'ФИО', width: '216px'},
+        {key: 'phone', label: 'Номер телефона', width: '168px'},
+        {key: 'branch', label: 'Филиал', width: '188px'},
+        {key: 'brand', label: 'Бренд', width: '140px'},
+        {key: 'role', label: 'Роль', width: '198px'}
+      ]
     }
   },
   methods: {

@@ -6,14 +6,15 @@ function useAllUsersWithRoles() {
     const users = ref<any[]>([]);
     const isLoading = ref(true);
     let totalCount = ref(0);
-    const size = 15
+    const size = 12
     const headers = {
         'Authorization': TOKEN,
     };
-    const fetching = async (page: number, searchValue: string): Promise<void> => {
+    const fetching = async (page: number, searchValue: string, roleKeys: string[]): Promise<void> => {
         try {
+            const roleKeysParams = roleKeys.map(key => `role_keys=${encodeURIComponent(key)}`).join('&');
             const response = await axios.get<ResponseType>(
-                `http://185.182.219.90/admin/users?page=${page - 1}&size=${size}&role_key=sales_manager&search=${searchValue}`,
+                `http://185.182.219.90/admin/users?page=${page - 1}&size=${size}&search=${searchValue}&${roleKeysParams}`,
                 {
                     headers
                 }
@@ -29,7 +30,7 @@ function useAllUsersWithRoles() {
 
     onMounted(() => {
         const initialPage = 1;
-        fetching(initialPage, '');
+        fetching(initialPage, '',[]);
     });
 
     return {

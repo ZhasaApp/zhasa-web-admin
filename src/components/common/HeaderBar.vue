@@ -1,10 +1,17 @@
 <template>
-  <div class="header-body">
-    <div class="input-wrapper">
-      <img src="../../assets/icon-search.svg" class="search-icon" alt="Search">
-      <input type="text" placeholder="Поиск" v-model="inputValue" @input="handleInput(inputValue)"/>
+  <div class="header_container">
+    <div class="header-body">
+      <div class="input-wrapper">
+        <img src="../../assets/icon-search.svg" class="search-icon" alt="Search">
+        <input type="text" placeholder="Поиск" v-model="inputValue" @input="handleInput(inputValue)"/>
+      </div>
+      <CustomButton @click="$emit('modalToggler')">{{isCreate ? "Создать" : "Добавить"}}</CustomButton>
     </div>
-    <CustomButton @click="$emit('modalToggler')">{{isCreate ? "Создать" : "Добавить"}}</CustomButton>
+    <ActionsBlock
+        :brands="brands"
+        :branches="branches"
+        @updateRoles="handleUpdateRoles"
+    />
   </div>
 </template>
 
@@ -12,10 +19,12 @@
 import {defineComponent, ref} from 'vue';
 import { debounce } from 'lodash';
 import CustomButton from "./CustomButton.vue";
+import ActionsBlock from "./ActionsBlock.vue";
+
 
 export default defineComponent({
   name: 'HeaderBar',
-  components: {CustomButton},
+  components: {ActionsBlock, CustomButton},
   props: {
     isCreate: {
       type: Boolean,
@@ -25,10 +34,12 @@ export default defineComponent({
       type: Function,
       required: true,
     },
+    branches: Array,
+    brands: Array,
   },
   data(){
   },
-  setup(props){
+  setup(props, {emit}){
     const inputValue = ref('');
 
     const debouncedSearch = debounce((value: string) => {
@@ -40,19 +51,30 @@ export default defineComponent({
       debouncedSearch(value);
     };
 
+    const handleUpdateRoles = (roles: any) => {
+      emit('updateRoles', roles);
+    };
+
     return {
       inputValue,
       handleInput,
+      handleUpdateRoles
     };
   }
 });
 </script>
 
 <style scoped lang="scss">
+.header_container{
+  background-color: #FFFFFF;
+  padding: 24px 16px;
+  border-radius: 12px 12px 0 0;
+}
 .header-body {
   width: 1070px;
   display: flex;
   gap: 16px;
+  margin-bottom: 24px;
 }
 
 .input-wrapper {
@@ -60,9 +82,6 @@ export default defineComponent({
   height: 56px;
   flex-shrink: 0;
   border-radius: 12px;
-  background: #FFFFFF;
-  box-shadow: 0px 2px 9px 2px rgba(134, 134, 134, 0.10);
-  padding: 8px 9px;
   box-sizing: border-box;
   position: relative;
   display: flex;
@@ -76,6 +95,7 @@ export default defineComponent({
     height: 100%;
     box-sizing: border-box;
     padding-left: 60px;
+    font-weight: bold;
   }
 }
 
