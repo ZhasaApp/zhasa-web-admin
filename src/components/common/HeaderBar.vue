@@ -10,13 +10,15 @@
     <ActionsBlock
         :brands="brands"
         :branches="branches"
-        @updateRoles="handleUpdateRoles"
+        :allSelected="allSelected"
+        @updateRolesFilter="handleUpdateRolesFilter"
+        @toggleAll="toggleAll"
     />
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, watch} from 'vue';
 import { debounce } from 'lodash';
 import CustomButton from "./CustomButton.vue";
 import ActionsBlock from "./ActionsBlock.vue";
@@ -36,11 +38,13 @@ export default defineComponent({
     },
     branches: Array,
     brands: Array,
+    allSelected: Boolean
   },
   data(){
   },
   setup(props, {emit}){
     const inputValue = ref('');
+    const allSelected = ref(props.allSelected);
 
     const debouncedSearch = debounce((value: string) => {
       props.handleSearch(value);
@@ -51,14 +55,24 @@ export default defineComponent({
       debouncedSearch(value);
     };
 
-    const handleUpdateRoles = (roles: any) => {
-      emit('updateRoles', roles);
+    watch(() => props.allSelected, (newValue) => {
+      allSelected.value = newValue
+    });
+
+    const handleUpdateRolesFilter = (roles: any) => {
+      emit('updateRolesFilter', roles);
+    };
+
+    const toggleAll = () => {
+      emit('toggleAll');
     };
 
     return {
       inputValue,
+      allSelected,
       handleInput,
-      handleUpdateRoles
+      handleUpdateRolesFilter,
+      toggleAll
     };
   }
 });

@@ -1,7 +1,7 @@
 <template>
   <div class='outer_actions_block'>
     <div class="actions_first_block">
-      <v-checkbox color="#1CB5C2" style="padding-left: 0" />
+      <v-checkbox color="#1CB5C2" style="padding-left: 0" v-model="allSelected" @change="toggleAll"/>
       <v-select
           v-model="selectedActions"
           :items="roleOptions"
@@ -34,7 +34,11 @@
           bg-color="#00000000"
           placeholder-color="red"
           class="demo"
-      />
+      >
+        <template v-slot:selection="{ index }">
+          <span v-if="index === 0" class="innerSpan">Роли</span>
+        </template>
+      </v-select>
       <v-select
           v-model="selectedBrands"
           :items="brands?.map((branch: any) => ({
@@ -47,12 +51,16 @@
           chip
           small-chips
           style="width: 144px"
-          placeholder="Бренд"
+          placeholder="Бренды"
           variant="outlined"
           color="#1CB5C2"
           bg-color="#00000000"
           placeholder-color="red"
-      />
+      >
+        <template v-slot:selection="{ index }">
+          <span v-if="index === 0" class="innerSpan">Бренд</span>
+        </template>
+      </v-select>
       <v-select
           v-model="selectedBranches"
           :items="branches?.map((branch: any) => ({
@@ -70,7 +78,11 @@
           color="#1CB5C2"
           bg-color="#00000000"
           placeholder-color="red"
-      />
+      >
+        <template v-slot:selection="{ index }">
+          <span v-if="index === 0" class="innerSpan">Филиалы</span>
+        </template>
+      </v-select>
     </div>
   </div>
 </template>
@@ -83,17 +95,39 @@ export default defineComponent({
   props: {
     branches: Array,
     brands: Array,
+    allSelected: Boolean
   },
-  setup(_, {emit}) {
+  setup(props, {emit}) {
     const selectedRoles = ref([]);
+    const selectedBrands = ref([]);
+    const selectedBranches = ref([]);
+    const allSelected = ref(props.allSelected);
+
     watch(selectedRoles, (newValue) => {
-      emit('updateRoles', newValue);
+      emit('updateRolesFilter', newValue);
     });
+    watch(selectedBrands, (newValue) => {
+      emit('updateBrandsFilter', newValue);
+    });
+    watch(selectedBranches, (newValue) => {
+      emit('updateBranches', newValue);
+    });
+
+    watch(() => props.allSelected, (newValue) => {
+      allSelected.value = newValue
+    });
+
+    const toggleAll = () => {
+      emit('toggleAll');
+    };
+
     return {
       selectedRoles,
-      selectedBrands: [],
+      selectedBrands,
       selectedActions: [],
-      selectedBranches: [],
+      selectedBranches,
+      allSelected,
+      toggleAll,
       roleOptions: [
         {text: "Админ", value: "owner"},
         {text: "Директор", value: "branch_director"},
@@ -119,7 +153,7 @@ export default defineComponent({
   font-size: 14px;
 }
 
-.v-text-field input::placeholder {
+.v-text-field input::placeholder, .innerSpan {
   color: #000;
   opacity: 1.0;
   font-weight: bold;
@@ -147,10 +181,6 @@ export default defineComponent({
 .v-field__input {
   min-height: 40px;
   padding-top: 10px;
-}
-
-.v-text-field.v-text-field--solo .v-input__control {
-  min-height: 90px;
 }
 
 .v-list-item {

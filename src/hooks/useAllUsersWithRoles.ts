@@ -11,6 +11,7 @@ function useAllUsersWithRoles() {
         'Authorization': TOKEN,
     };
     const fetching = async (page: number, searchValue: string, roleKeys: string[]): Promise<void> => {
+        console.log("roleKeys",roleKeys)
         try {
             const roleKeysParams = roleKeys.map(key => `role_keys=${encodeURIComponent(key)}`).join('&');
             const response = await axios.get<ResponseType>(
@@ -22,7 +23,8 @@ function useAllUsersWithRoles() {
             users.value = response.data?.result
             totalCount.value = response.data?.count
         } catch (error) {
-            alert(error);
+            console.log(error)
+            // alert(error);
         } finally {
             isLoading.value = false;
         }

@@ -13,7 +13,12 @@
       <tbody>
       <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
         <td>
-          <v-checkbox color="#1CB5C2"></v-checkbox>
+          <v-checkbox
+              color="#1CB5C2"
+              v-model="selectedUsers"
+              :value="row.id"
+              @change="toggleSelection(rowIndex)">
+          </v-checkbox>
         </td>
         <td v-for="(column, columnIndex) in columns" :key="columnIndex">
           <v-select
@@ -66,6 +71,7 @@
 
 <script lang="ts">
 import {defineComponent, PropType, ref, watch} from 'vue';
+import {ro} from "vuetify/locale";
 
 interface TableColumn {
   key: string;
@@ -99,13 +105,19 @@ export default defineComponent({
     },
     filterRoles: {
       type: Array
+    },
+    selectedUsers: {
+      type: Array
     }
   },
-  setup(props) {
+  setup(props, {emit}) {
     const currentPage = ref(1);
     watch(() => props.searchValue, () => {
       currentPage.value = 1;
     });
+    watch(() => props.filterRoles, () => {
+      currentPage.value = 1
+    })
 
     const menu = ref<Array<boolean>>([]);
 
@@ -126,6 +138,11 @@ export default defineComponent({
       // Handle delete action for the specific row
     };
 
+    const toggleSelection = (rowIndex: number) => {
+      console.log("TOGGLE")
+      emit('toggleSelection', rowIndex);
+    };
+
     return {
       currentPage,
       roleOptions: [
@@ -142,6 +159,7 @@ export default defineComponent({
       toggleMenu,
       handleEdit,
       handleDelete,
+      toggleSelection
     }
   },
   methods: {

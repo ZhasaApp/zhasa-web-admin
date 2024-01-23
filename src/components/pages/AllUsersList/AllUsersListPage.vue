@@ -6,7 +6,9 @@
         :isCreate="true"
         :brands="brands"
         :branches="branches"
-        @updateRoles="updateSelectedRoles"
+        :allSelected="allSelected"
+        @updateRolesFilter="updateSelectedRoles"
+        @toggleAll="toggleAll"
     />
     <TableData
         v-if="!isLoading"
@@ -16,7 +18,10 @@
         :totalCount="totalCount"
         :size="size"
         :searchValue="searchValue"
-        @updateRoles="updateSelectedRoles"
+        @updateRolesFilter="updateSelectedRoles"
+        @toggleSelection="toggleSelection"
+        :filterRoles="selectedRoles"
+        :selectedUsers="selectedUsers"
     />
     <span v-else>Загрузка ...</span>
   </div>
@@ -44,6 +49,7 @@ import HeaderBar from "../../common/HeaderBar.vue";
 import useAllUsersWithRoles from "../../../hooks/useAllUsersWithRoles.ts";
 import {ref, watch} from 'vue'
 import AddManagerRoleModal from "../AllRoles/AddManagerRoleModal.vue";
+import {id} from "vuetify/locale";
 
 export default defineComponent({
   name: 'AllUsersListPage',
@@ -75,6 +81,43 @@ export default defineComponent({
   setup() {
     const searchValue = ref('');
     const selectedRoles = ref([]);
+
+    const selectedUsers = ref([]);
+    const allSelected = ref(false);
+
+    watch(allSelected, (newVal) => {
+
+    });
+
+    watch(selectedUsers, (newVal) => {
+      console.log("selectedUsers.size=",selectedUsers.value.length)
+      console.log("usersTableData.size=",usersTableData.value.length)
+      if (newVal.length === usersTableData.value.length) {
+        allSelected.value = true;
+      } else {
+        allSelected.value = false;
+      }
+      console.log("allSelected.value=",allSelected.value)
+    });
+
+    function toggleAll() {
+      if (allSelected.value) {
+        selectedUsers.value = [];
+      } else {
+        selectedUsers.value = usersTableData.value.map((user)=>(user.id))
+      }
+    }
+
+    const toggleSelection = (rowIndex: number) => {
+      console.log("TOGGLE INSDE")
+      let userId = usersTableData.value[rowIndex].id
+      if (selectedUsers.value.includes(userId)) {
+        selectedUsers.value = selectedUsers.value.filter(i => i !== userId);
+      } else {
+        selectedUsers.value = [...selectedUsers.value, userId]
+      }
+    };
+
     const updateSelectedRoles = (roles: any) => {
       selectedRoles.value = roles;
     };
@@ -119,6 +162,10 @@ export default defineComponent({
       handleSearch,
       searchValue,
       selectedRoles,
+      selectedUsers,
+      toggleAll,
+      allSelected,
+      toggleSelection,
       updateSelectedRoles,
       roleOptions: [
         {text: "Админ", value: "owner"},
