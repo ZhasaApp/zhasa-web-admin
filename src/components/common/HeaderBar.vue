@@ -12,7 +12,11 @@
         :branches="branches"
         :allSelected="allSelected"
         @updateRolesFilter="handleUpdateRolesFilter"
+        @updateBrandsFilter="handleUpdateBrandsFilter"
+        @updateBranchesFilter="handleUpdateBranchesFilter"
+        @editRoleClicked="handleRoleUpdate"
         @toggleAll="toggleAll"
+        :selectedUsers="selectedUsers"
     />
   </div>
 </template>
@@ -38,7 +42,8 @@ export default defineComponent({
     },
     branches: Array,
     brands: Array,
-    allSelected: Boolean
+    allSelected: Boolean,
+    selectedUsers: Array
   },
   data(){
   },
@@ -62,6 +67,17 @@ export default defineComponent({
     const handleUpdateRolesFilter = (roles: any) => {
       emit('updateRolesFilter', roles);
     };
+    const handleUpdateBrandsFilter = (roles: any) => {
+      emit('updateBrandsFilter', roles);
+    };
+    const handleUpdateBranchesFilter = (roles: any) => {
+      emit('updateBranchesFilter', roles);
+    };
+
+
+    const handleRoleUpdate = () =>{
+      emit('editRoleClicked')
+    }
 
     const toggleAll = () => {
       emit('toggleAll');
@@ -72,6 +88,9 @@ export default defineComponent({
       allSelected,
       handleInput,
       handleUpdateRolesFilter,
+      handleUpdateBrandsFilter,
+      handleUpdateBranchesFilter,
+      handleRoleUpdate,
       toggleAll
     };
   }
@@ -81,7 +100,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .header_container{
   background-color: #FFFFFF;
-  padding: 24px 16px;
+  padding: 24px 16px 24px 8px;
   border-radius: 12px 12px 0 0;
 }
 .header-body {
@@ -94,6 +113,7 @@ export default defineComponent({
 .input-wrapper {
   width: 876px;
   height: 56px;
+  padding-left: 8px;
   flex-shrink: 0;
   border-radius: 12px;
   box-sizing: border-box;

@@ -2,15 +2,51 @@
   <CustomModal @close.prevent="toggleModal" :modalActive="modalActive" :modal-title="modalTitle">
     <div class="modal-content">
       <form @submit.prevent="onCreateButtonClick">
-        <input placeholder="Имя" type="text" v-model="firstName" @input="checkForData"/>
-        <input placeholder="Фамилия" type="text" v-model="lastName" @input="checkForData"/>
+        <input placeholder="Имя" type="text" v-model="firstName" @input="checkForData" class="inputFirstName"/>
+        <input placeholder="Фамилия" type="text" v-model="lastName" @input="checkForData" class="inputLastName"/>
         <input
             placeholder="+7 ___ ___ __ __"
             v-maska
             data-maska="+7 ### ### ## ##"
             v-model="telephoneNumber"
             @input="checkForData"
+            class="inputTelephone"
         />
+        <a-select
+            v-model="selectedBranchId"
+            show-search
+            placeholder="Выберите роль"
+            style="width: 100%;"
+            :options="roleOptions"
+            :filter-option="filterOption"
+            @change="handleBranchChange"
+        ></a-select>
+        <a-select
+            v-model="selectedBranchId"
+            show-search
+            placeholder="Выберите филиал"
+            style="width: 100%; margin: 24px auto"
+            :options="branches?.map((branch: any) => ({
+              label: branch.description.toString(),
+              value: branch.id.toString() ,
+              }))"
+            :filter-option="filterOption"
+            @change="handleBranchChange"
+        ></a-select>
+        <a-select
+            v-model="selectedBrandsIds"
+            mode="multiple"
+            show-search
+            placeholder="Выберите бренд"
+            class="selector-with_multiple-select"
+            :options="brands?.map((branch: any) => ({
+              label: branch.title.toString(),
+              value: branch.id.toString() ,
+              }))"
+            :filter-option="filterOption"
+            @change="handleBrandsChange"
+            showArrow="true"
+        ></a-select>
         <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
         <CustomButton
             type="submit"
@@ -32,7 +68,7 @@
 </template>
 <script lang="ts">
 
-import {defineComponent, PropType} from "vue";
+import {defineComponent, PropType, ref, watch} from "vue";
 import {vMaska} from "maska"
 import CustomButton from "../../common/CustomButton.vue";
 import CustomModal from "../../common/CustomModal.vue";
@@ -52,7 +88,23 @@ export default defineComponent({
       type: Function as PropType<() => void>,
       required: true
     },
-    errorMessage : String
+    errorMessage : String,
+    brands: Array,
+    branches: Array
+  },
+  setup(props){
+    const selectedRole = ref(null);
+    const selectedBranchId = ref('');
+    const selectedBrandsIds = ref([])
+    watch(() => props.modalActive, () => {
+      selectedRole.value = null;
+    });
+    return {
+      selectedRole,
+      selectedBranchId,
+      selectedBrandsIds,
+    }
+
   },
   directives: {maska: vMaska},
   data() {
@@ -66,7 +118,12 @@ export default defineComponent({
         masked: "",
         unmasked: "",
         completed: false
-      }
+      },
+      roleOptions: [
+        {text: "Админ", value: "owner"},
+        {text: "Директор", value: "branch_director"},
+        {text: "Менеджер", value: "sales_manager"}
+      ]
     }
   },
   methods: {
@@ -86,7 +143,7 @@ export default defineComponent({
 })
 </script>
 <style scoped>
-input {
+.inputFirstName, .inputLastName, .inputTelephone,.v-input__control, .v-field , .v-field--active, .v-field--appended{
   color: #4D4D4D;
   font-size: 16px;
   font-style: normal;
@@ -97,5 +154,8 @@ input {
   border-radius: 12px;
   border: 1px solid #999;
   margin-bottom: 24px;
+}
+input::placeholder{
+  color: #4D4D4D;
 }
 </style>

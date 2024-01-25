@@ -107,7 +107,6 @@ export default defineComponent({
   methods: {
     handleUserChange(value: any) {
       this.selectedUserId = value;
-      console.log("value", value)
       if (this.selectedBranchId.length > 0 && this.selectedBrandsIds.length > 0) {
         this.isAllDataEntered = true
       } else this.isAllDataEntered = false

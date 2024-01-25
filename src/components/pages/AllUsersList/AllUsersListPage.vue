@@ -7,7 +7,11 @@
         :brands="brands"
         :branches="branches"
         :allSelected="allSelected"
+        :selectedUsers="selectedUsers"
         @updateRolesFilter="updateSelectedRoles"
+        @updateBrandsFilter="updateSelectedBrands"
+        @updateBranchesFilter="updateSelectedBranches"
+        @editRoleClicked="editRoleClicked"
         @toggleAll="toggleAll"
     />
     <TableData
@@ -19,8 +23,12 @@
         :size="size"
         :searchValue="searchValue"
         @updateRolesFilter="updateSelectedRoles"
+        @updateBrandsFilter="updateSelectedBrands"
+        @updateBranchesFilter="updateSelectedBranches"
         @toggleSelection="toggleSelection"
         :filterRoles="selectedRoles"
+        :filterBrands="selectedBrands"
+        :filterBranches="selectedBranches"
         :selectedUsers="selectedUsers"
     />
     <span v-else>Загрузка ...</span>
@@ -29,7 +37,14 @@
       :modalActive="modalActive"
       :toggleModal="modalToggler"
       @createUser="onCreateUser"
+      :brands="brands"
+      :branches="branches"
       :errorMessage="errorMessage"
+  />
+  <ChangeRole
+      :modalActive="editRoleModalActive"
+      :toggleModal="editRoleModalToggler"
+      @editRoleFromDropDown="editRoleAction"
   />
   <a-alert
       v-if="showAlert"
@@ -49,11 +64,12 @@ import HeaderBar from "../../common/HeaderBar.vue";
 import useAllUsersWithRoles from "../../../hooks/useAllUsersWithRoles.ts";
 import {ref, watch} from 'vue'
 import AddManagerRoleModal from "../AllRoles/AddManagerRoleModal.vue";
-import {id} from "vuetify/locale";
+import ChangeRole from "../Modals/ChangeRole.vue";
+import ActionsBlock from "../../common/ActionsBlock.vue";
 
 export default defineComponent({
   name: 'AllUsersListPage',
-  components: {AddManagerRoleModal, CreatUserModal, TableData, HeaderBar},
+  components: {ActionsBlock, ChangeRole, AddManagerRoleModal, CreatUserModal, TableData, HeaderBar},
   data() {
     return {
       branches: [],
@@ -81,35 +97,30 @@ export default defineComponent({
   setup() {
     const searchValue = ref('');
     const selectedRoles = ref([]);
+    const selectedBrands = ref([]);
+    const selectedBranches = ref([]);
 
     const selectedUsers = ref([]);
     const allSelected = ref(false);
-
-    watch(allSelected, (newVal) => {
-
-    });
+    const editRoleModalActive = ref(false)
 
     watch(selectedUsers, (newVal) => {
-      console.log("selectedUsers.size=",selectedUsers.value.length)
-      console.log("usersTableData.size=",usersTableData.value.length)
       if (newVal.length === usersTableData.value.length) {
         allSelected.value = true;
       } else {
         allSelected.value = false;
       }
-      console.log("allSelected.value=",allSelected.value)
     });
 
     function toggleAll() {
       if (allSelected.value) {
         selectedUsers.value = [];
       } else {
-        selectedUsers.value = usersTableData.value.map((user)=>(user.id))
+        selectedUsers.value = usersTableData.value.map((user) => (user.id))
       }
     }
 
     const toggleSelection = (rowIndex: number) => {
-      console.log("TOGGLE INSDE")
       let userId = usersTableData.value[rowIndex].id
       if (selectedUsers.value.includes(userId)) {
         selectedUsers.value = selectedUsers.value.filter(i => i !== userId);
@@ -120,6 +131,18 @@ export default defineComponent({
 
     const updateSelectedRoles = (roles: any) => {
       selectedRoles.value = roles;
+    };
+    const updateSelectedBrands = (brands: any) => {
+      selectedBrands.value = brands;
+    };
+    const updateSelectedBranches = (branches: any) => {
+      selectedBranches.value = branches;
+    };
+    const editRoleModalToggler = () => {
+      editRoleModalActive.value = !editRoleModalActive.value
+    };
+    const editRoleClicked = () => {
+      editRoleModalToggler()
     };
     const {users, isLoading, fetching, totalCount, size} = useAllUsersWithRoles();
     const usersTableData = computed(() => {
@@ -139,19 +162,60 @@ export default defineComponent({
       });
     });
 
+    const initPage = () => {
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value)
+      selectedUsers.value = [];
+    };
     const handleSearch = (value: any) => {
       searchValue.value = value;
     };
     watch(searchValue, (searchValue) => {
-      console.log('ddd', [])
-      fetching(1, searchValue, [])
+      fetching(1, searchValue, [], [], [])
     });
 
     watch(selectedRoles, (selectedRoles) => {
-      console.log('123456', [])
-      fetching(1, searchValue.value, selectedRoles)
+      fetching(1, searchValue.value, selectedRoles, selectedBrands.value, selectedBranches.value)
     });
 
+    watch(selectedBrands, (selectedBrands) => {
+      console.log("INSIDE WATCH, selectedBrands=", selectedBrands)
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands, selectedBranches.value)
+    });
+
+    watch(selectedBranches, (selectedBranches) => {
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches)
+    });
+
+    const editRoleAction = (data: any) => {
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Authorization': TOKEN,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_ids: selectedUsers.value,
+          new_role: data.role,
+        })
+      };
+      fetch('http://185.182.219.90/admin/change-users-role', requestOptions)
+          .then(async response => {
+            const isJson = response.headers.get('content-type')?.includes('application/json');
+            const data = isJson && await response.json();
+
+            if (!response.ok) {
+              const error = (data && data.message) || response.status;
+              console.log("HERE IT IS", error)
+              return Promise.reject(error);
+            }
+            editRoleModalToggler()
+            console.log("SUCCESS")
+            initPage()
+          })
+          .catch(error => {
+            console.error("There was an error!", error);
+          });
+    }
     return {
       usersTableData,
       isLoading,
@@ -162,11 +226,19 @@ export default defineComponent({
       handleSearch,
       searchValue,
       selectedRoles,
+      selectedBrands,
+      selectedBranches,
       selectedUsers,
       toggleAll,
       allSelected,
       toggleSelection,
       updateSelectedRoles,
+      updateSelectedBrands,
+      updateSelectedBranches,
+      editRoleModalToggler,
+      editRoleClicked,
+      editRoleAction,
+      editRoleModalActive,
       roleOptions: [
         {text: "Админ", value: "owner"},
         {text: "Директор", value: "branch_director"},

@@ -10,12 +10,16 @@ function useAllUsersWithRoles() {
     const headers = {
         'Authorization': TOKEN,
     };
-    const fetching = async (page: number, searchValue: string, roleKeys: string[]): Promise<void> => {
-        console.log("roleKeys",roleKeys)
+    const fetching = async (page: number, searchValue: string, roleKeys: string[], brandsFilter: string[], branchesFilter: string[]): Promise<void> => {
         try {
+            console.log("roleKeys", roleKeys)
+            console.log("brandsFilter", brandsFilter)
+            console.log("branchesFilter", branchesFilter)
             const roleKeysParams = roleKeys.map(key => `role_keys=${encodeURIComponent(key)}`).join('&');
+            const brandsParams = brandsFilter.map(key => `brand_ids=${encodeURIComponent(key)}`).join('&');
+            const branchesParams = branchesFilter.map(key => `branch_ids=${encodeURIComponent(key)}`).join('&');
             const response = await axios.get<ResponseType>(
-                `http://185.182.219.90/admin/users?page=${page - 1}&size=${size}&search=${searchValue}&${roleKeysParams}`,
+                `http://185.182.219.90/admin/users?page=${page - 1}&size=${size}&search=${searchValue}&${roleKeysParams}&${brandsParams}&${branchesParams}`,
                 {
                     headers
                 }
@@ -32,7 +36,7 @@ function useAllUsersWithRoles() {
 
     onMounted(() => {
         const initialPage = 1;
-        fetching(initialPage, '',[]);
+        fetching(initialPage, '', [], [], []);
     });
 
     return {

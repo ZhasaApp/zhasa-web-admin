@@ -2,21 +2,34 @@
   <div class='outer_actions_block'>
     <div class="actions_first_block">
       <v-checkbox color="#1CB5C2" style="padding-left: 0" v-model="allSelected" @change="toggleAll"/>
-      <v-select
-          v-model="selectedActions"
-          :items="roleOptions"
-          item-title="text"
-          item-value="value"
-          multiple
-          chip
-          small-chips
-          style="width: 258px"
-          placeholder="Выбрано пользователей: 123"
-          variant="outlined"
-          color="#1CB5C2"
-          bg-color="#00000000"
-          placeholder-color="red"
-      />
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn
+              color="primary"
+              v-bind="props"
+              :variant="selectedUsers.length > 0 ? 'tonal' : 'none'"
+              :disabled="selectedUsers.length === 0"
+              style="width: 270px; text-align: left"
+          >
+            {{ selectedUsers.length > 0 ? 'Выбрано пользователей ' + selectedUsers.length + '  ' : 'Выбрать все' }}
+            <v-icon v-if="selectedUsers.length > 0">mdi-chevron-down</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item @click="handleEditRole">
+            <v-list-item-content>Поменять роль</v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="handleEditBranch">
+            <v-list-item-content>Поменять филиал</v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="handleEditBrand">
+            <v-list-item-content>Поменять бренд</v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="handleDeleteUsers" >
+            <v-list-item-content><span class="deleteText">Удалить</span></v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </div>
     <div class="actions_inner_cards">
       <v-select
@@ -95,7 +108,8 @@ export default defineComponent({
   props: {
     branches: Array,
     brands: Array,
-    allSelected: Boolean
+    allSelected: Boolean,
+    selectedUsers: Array
   },
   setup(props, {emit}) {
     const selectedRoles = ref([]);
@@ -108,9 +122,10 @@ export default defineComponent({
     });
     watch(selectedBrands, (newValue) => {
       emit('updateBrandsFilter', newValue);
+
     });
     watch(selectedBranches, (newValue) => {
-      emit('updateBranches', newValue);
+      emit('updateBranchesFilter', newValue);
     });
 
     watch(() => props.allSelected, (newValue) => {
@@ -121,13 +136,26 @@ export default defineComponent({
       emit('toggleAll');
     };
 
+    const handleEditRole = () => {
+      emit('editRoleClicked');
+    };
+    const handleEditBranch = () => {
+    };
+    const handleEditBrand = () => {
+    };
+    const handleDeleteUsers = () => {
+    };
+
     return {
       selectedRoles,
       selectedBrands,
-      selectedActions: [],
       selectedBranches,
       allSelected,
       toggleAll,
+      handleEditRole,
+      handleEditBranch,
+      handleEditBrand,
+      handleDeleteUsers,
       roleOptions: [
         {text: "Админ", value: "owner"},
         {text: "Директор", value: "branch_director"},
@@ -142,6 +170,28 @@ export default defineComponent({
 <style>
 .actions_first_block {
   display: flex;
+  align-items: center;
+}
+
+.actions_first_block .v-btn--disabled {
+  text-align: start !important;
+  color: #4D4D4D !important;
+  opacity: 1.0 !important;
+}
+
+.actions_first_block .v-btn__content  {
+  justify-content: left !important;
+  text-transform: initial !important;
+  font-weight: bold;
+}
+
+.actions_first_block .v-btn  {
+  display: block !important;
+}
+
+.actions_first_block .v-btn--variant-tonal  {
+  background-color: #E2E1E8 !important;
+  color: #4D4D4D !important;
 }
 
 .outer_actions_block {
@@ -164,7 +214,9 @@ export default defineComponent({
   display: flex;
   gap: 8px;
 }
-
+.deleteText{
+  color: red;
+}
 .v-list-item-title {
   color: black !important;
   font-size: 14px;

@@ -17,6 +17,7 @@
               color="#1CB5C2"
               v-model="selectedUsers"
               :value="row.id"
+              style="padding-left: 8px"
               @change="toggleSelection(rowIndex)">
           </v-checkbox>
         </td>
@@ -26,7 +27,7 @@
               :items="roleOptions"
               item-title="text"
               item-value="value"
-              placeholder="Бренд"
+              :placeholder="getRoleText(row.role)"
               variant="outlined"
               style="width: 105px"
           >
@@ -63,7 +64,7 @@
           :total="totalCount"
           :default-page-size="size"
           :showSizeChanger="false"
-          @change="$emit('handlePageChange', currentPage, searchValue, filterRoles)"
+          @change="$emit('handlePageChange', currentPage, searchValue, filterRoles, filterBrands, filterBranches)"
       />
     </div>
   </div>
@@ -71,7 +72,6 @@
 
 <script lang="ts">
 import {defineComponent, PropType, ref, watch} from 'vue';
-import {ro} from "vuetify/locale";
 
 interface TableColumn {
   key: string;
@@ -106,25 +106,36 @@ export default defineComponent({
     filterRoles: {
       type: Array
     },
+    filterBrands: Array,
+    filterBranches: Array,
     selectedUsers: {
       type: Array
     }
   },
   setup(props, {emit}) {
     const currentPage = ref(1);
+    const roleOptions = [
+      {text: "Админ", value: "owner"},
+      {text: "Директор", value: "branch_director"},
+      {text: "Менеджер", value: "sales_manager"}
+    ]
     watch(() => props.searchValue, () => {
       currentPage.value = 1;
     });
     watch(() => props.filterRoles, () => {
       currentPage.value = 1
     })
+    watch(() => props.filterBrands, () => {
+      currentPage.value = 1;
+    });
+    watch(() => props.filterBranches, () => {
+      currentPage.value = 1
+    })
 
     const menu = ref<Array<boolean>>([]);
 
     const toggleMenu = (rowIndex: number, event: MouseEvent) => {
-      console.log("RowIndex=", rowIndex)
       menu.value[rowIndex] = !menu.value[rowIndex];
-      console.log("menu.value[rowIndex]=", menu.value[rowIndex])
       event.preventDefault();
     };
 
@@ -143,13 +154,14 @@ export default defineComponent({
       emit('toggleSelection', rowIndex);
     };
 
+    const getRoleText = (roleValue: string) => {
+      const role = roleOptions.find((option: any) => option.value === roleValue);
+      return role ? role.text : 'Select Role';
+    };
+
     return {
       currentPage,
-      roleOptions: [
-        {text: "Админ", value: "owner"},
-        {text: "Директор", value: "branch_director"},
-        {text: "Менеджер", value: "sales_manager"}
-      ],
+      roleOptions,
       column: {key: 'role'},
       items: [
         {title: 'Редактировать'},
@@ -159,7 +171,8 @@ export default defineComponent({
       toggleMenu,
       handleEdit,
       handleDelete,
-      toggleSelection
+      toggleSelection,
+      getRoleText
     }
   },
   methods: {
