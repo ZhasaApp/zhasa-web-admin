@@ -47,6 +47,15 @@
       :branches="branches"
       :errorMessage="errorMessage"
   />
+  <EditUserModal
+      :editModalActive="editModalActive"
+      :editToggleModal="editToggleModal"
+      @editUser="onEditUser"
+      :brands="brands"
+      :branches="branches"
+      :errorMessage="errorMessage"
+      :user="selectedEditUser"
+  />
   <ChangeRole
       :modalActive="editRoleModalActive"
       :toggleModal="editRoleModalToggler"
@@ -71,8 +80,8 @@
       @deleteFromDropDown="deleteAction"
   />
   <a-alert
-      v-if="showAlert"
-      message="Новый пользователь успешно создан"
+      v-if="showAlert.length > 0"
+      :message="showAlert"
       type="success"
       show-icon
       class="success-alert"
@@ -93,10 +102,12 @@ import ActionsBlock from "../../common/ActionsBlock.vue";
 import ChangeBrandModal from "../Modals/ChangeBrandModal.vue";
 import ChangeBranchModal from "../Modals/ChangeBranchModal.vue";
 import DeleteModal from "../Modals/DeleteModal.vue";
+import EditUserModal from "./EditUserModal.vue";
 
 export default defineComponent({
   name: 'AllUsersListPage',
   components: {
+    EditUserModal,
     DeleteModal,
     ChangeBranchModal,
     ChangeBrandModal, ActionsBlock, ChangeRole, AddManagerRoleModal, CreatUserModal, TableData, HeaderBar
@@ -122,6 +133,8 @@ export default defineComponent({
         .catch(error => console.log(error));
   },
   setup() {
+    const pureUserList = ref<Array<any>>([])
+
     const searchValue = ref('');
     const selectedRoles = ref([]);
     const selectedBrands = ref([]);
@@ -134,6 +147,8 @@ export default defineComponent({
     const editBrandModalActive = ref(false)
     const editBranchModalActive = ref(false)
     const deleteModalActive = ref(false)
+    const editModalActive = ref(false)
+    const selectedEditUser = ref<any>(null)
 
     watch(selectedUsers, (newVal) => {
       if (newVal.length === usersTableData.value.length && usersTableData.value.length != 0) {
@@ -199,6 +214,7 @@ export default defineComponent({
       if (!users.value || isLoading.value) {
         return [];
       }
+      pureUserList.value = users.value
       return users.value.map((user: any) => {
         return {
           id: user.id,
@@ -264,6 +280,7 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
+            errorMessage.value = data.error;
             console.error("There was an error!", error);
           });
     }
@@ -283,7 +300,8 @@ export default defineComponent({
     }
 
     const onUserEdit = (user: any) => {
-      console.log("EDIT USER", user)
+      selectedEditUser.value = pureUserList.value.find(item => item.id == user.id)
+      editToggleModal()
     }
 
     const editSingleRoleAction = (role: string, selectedUserId: number) => {
@@ -310,6 +328,7 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
+            errorMessage.value = data.error;
             console.error("There was an error!", error);
           });
     }
@@ -340,6 +359,7 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
+            errorMessage.value = data.error;
             console.error("There was an error!", error);
           });
     }
@@ -369,6 +389,7 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
+            errorMessage.value = data.error;
             console.error("There was an error!", error);
           });
     }
@@ -398,14 +419,15 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
+            errorMessage.value = data.error;
             console.error("There was an error!", error);
           });
     }
 
     const modalActive = ref(false)
     const createdUserId = ref('')
-    const errorMessage = ref('')
-    const showAlert = ref(false)
+    const errorMessage = ref<string>('')
+    const showAlert = ref<string>('')
 
     const onCreateUser = (dataBody: any) => {
       const requestOptions = {
@@ -429,9 +451,9 @@ export default defineComponent({
             const data = isJson && await response.json();
 
             if (!response.ok) {
-              const error = (data && data.message) || response.status;
-              console.log("HERE IT IS", error)
-              errorMessage.value = error.message;
+              const error = (data && data.error) || response;
+              console.log("!@£", data)
+              errorMessage.value = data.error;
               return Promise.reject(error);
             }
             createdUserId.value = data;
@@ -439,19 +461,69 @@ export default defineComponent({
             initPage()
 
             setTimeout(() => {
-              showAlert.value = true;
+              showAlert.value = "Новый пользователь успешно создан";
               setTimeout(() => {
-                showAlert.value = false;
+                showAlert.value = "";
               }, 2000);
             }, 200);
           })
           .catch(error => {
+            errorMessage.value = data.error;
+            console.error("There was an error!", error);
+          });
+    }
+
+    const onEditUser = (dataBody: any) => {
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Authorization': TOKEN,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: dataBody.id,
+          phone: dataBody.telephoneNumber.replace(/\s/g, ''),
+          first_name: dataBody.firstName,
+          last_name: dataBody.lastName,
+          role: dataBody.role,
+          brand_ids: dataBody.brand_ids.map((value: string) => Number(value)),
+          branch_id: Number(dataBody.branch_id)
+        })
+      };
+      fetch('http://185.182.219.90/admin/update-user', requestOptions)
+          .then(async response => {
+            const isJson = response.headers.get('content-type')?.includes('application/json');
+            const data = isJson && await response.json();
+
+            if (!response.ok) {
+              const error = (data && data.message) || response.status;
+              console.log("HERE IT IS", error)
+              errorMessage.value = data.error;
+              return Promise.reject(error);
+            }
+            createdUserId.value = data;
+            editToggleModal()
+            initPage()
+
+            setTimeout(() => {
+              showAlert.value = "Пользователь успешно отредактирован!";
+              setTimeout(() => {
+                showAlert.value = "";
+              }, 2000);
+            }, 200);
+          })
+          .catch(error => {
+            errorMessage.value = data.error;
             console.error("There was an error!", error);
           });
     }
 
     const createUserModalToggler = () => {
       modalActive.value = !modalActive.value;
+    }
+
+    const editToggleModal = () => {
+      editModalActive.value = !editModalActive.value;
     }
 
     return {
@@ -488,6 +560,9 @@ export default defineComponent({
       editBranchModalActive,
       deleteModalActive,
       deleteUserClicked,
+      editModalActive,
+      editToggleModal,
+      onEditUser,
       roleOptions: [
         {text: "Админ", value: "owner"},
         {text: "Директор", value: "branch_director"},
@@ -511,7 +586,8 @@ export default defineComponent({
       createdUserId,
       errorMessage,
       showAlert,
-      createUserModalToggler
+      createUserModalToggler,
+      selectedEditUser
     }
   }
 });

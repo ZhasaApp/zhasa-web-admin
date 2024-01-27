@@ -1,5 +1,5 @@
 <template>
-  <CustomModal @close.prevent="toggleModal" :modalActive="modalActive" :modal-title="modalTitle">
+  <CustomModal @close.prevent="editToggleModal" :modalActive="editModalActive" :modal-title="modalTitle">
     <div class="modal-content">
       <form @submit.prevent="onCreateButtonClick">
         <input placeholder="Имя" type="text" v-model="firstName" @input="validate" class="inputFirstName"/>
@@ -14,6 +14,7 @@
         />
         <a-select
             v-model="selectedRole"
+            :defaultValue="selectedRole"
             placeholder="Выберите роль"
             style="width: 100%;"
             :options="roleOptions.map(role => ({ label: role.title, value: role.value }))"
@@ -51,7 +52,7 @@
                  v-if="(errorMessage?.length ??0)>0"/>
         <div class="button-box">
           <CustomButton
-              @click="toggleModal"
+              @click="editToggleModal"
               type="button"
               :additional-styles="{color: '#333', border: '1px solid #999', opacity: '0.5', background: '#FFF'}"
           >
@@ -62,7 +63,7 @@
               :additional-styles="{opacity: `${ isAllDataEntered ? '1' : '0.5'}`,}"
               :disabled="!isAllDataEntered"
           >
-            Создать
+            Сохранить
           </CustomButton>
         </div>
       </form>
@@ -71,7 +72,7 @@
 </template>
 <script lang="ts">
 
-import {defineComponent, PropType, ref, watch} from "vue";
+import {defineComponent, PropType, ref, watch, onMounted, getCurrentInstance} from "vue";
 import {vMaska} from "maska"
 import CustomButton from "../../common/CustomButton.vue";
 import CustomModal from "../../common/CustomModal.vue";
@@ -81,30 +82,44 @@ export default defineComponent({
   props: {
     modalTitle: {
       type: String,
-      default: 'Создать нового пользователя',
+      default: 'Редактировать пользователя',
     },
-    modalActive: {
+    editModalActive: {
       type: Boolean,
       default: false
     },
-    toggleModal: {
+    editToggleModal: {
       type: Function as PropType<() => void>,
       required: true
     },
     errorMessage: String,
     brands: Array,
-    branches: Array
+    branches: Array,
+    user: Object
   },
   setup(props) {
-    const firstName = ref<string>('');
-    const lastName = ref<string>('');
-    const telephoneNumber = ref<string>('');
-    const selectedRole = ref<string>('');
+    const firstName = ref("");
+    const lastName = ref("");
+    const telephoneNumber = ref("");
+    const selectedRole = ref('sales_manager');
     const selectedBranchId = ref<number>();
     const selectedBrandsIds = ref<Array<number>>([])
     const isAllDataEntered = ref(false)
+    const roleOptions = [
+      {title: "Админ", value: "owner"},
+      {title: "Директор", value: "branch_director"},
+      {title: "Менеджер", value: "sales_manager"}
+    ]
 
-    watch(() => props.modalActive, () => {
+    watch(() => props.user, (user) => {
+      console.log(user)
+      firstName.value = user.first_name
+      lastName.value = user.last_name
+      telephoneNumber.value = user.phone
+      // selectedRole.value = user.role
+    });
+
+    watch(() => props.editModalActive, () => {
       selectedRole.value = '';
     });
     watch(selectedRole, () => {
@@ -147,7 +162,8 @@ export default defineComponent({
       onBranchSelected,
       onBrandSelected,
       validate,
-      isAllDataEntered
+      isAllDataEntered,
+      roleOptions
     }
 
   },
@@ -160,22 +176,25 @@ export default defineComponent({
         unmasked: "",
         completed: false
       },
-      roleOptions: [
-        {title: "Админ", value: "owner"},
-        {title: "Директор", value: "branch_director"},
-        {title: "Менеджер", value: "sales_manager"}
-      ]
+      newUser: this.$props.user
     }
   },
   methods: {
     onCreateButtonClick() {
-      this.$emit('createUser', {
+      console.log("firstName=", this.firstName)
+      console.log("lastName=", this.lastName)
+      console.log("telephoneNumber=", this.telephoneNumber)
+      console.log("role=", this.selectedRole)
+      console.log("brand_ids=", this.selectedBrandsIds)
+      console.log("branch_id=", this.selectedBranchId)
+      this.$emit('editUser', {
         firstName: this.firstName,
         lastName: this.lastName,
         telephoneNumber: this.telephoneNumber,
         role: this.selectedRole,
         brand_ids: this.selectedBrandsIds,
-        branch_id: this.selectedBranchId
+        branch_id: this.selectedBranchId,
+        id: this.$props.user.id
       })
     }
   }
