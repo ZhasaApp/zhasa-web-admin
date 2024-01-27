@@ -21,6 +21,7 @@
         v-if="!isLoading"
         :tableData="usersTableData"
         :columns="tableColumns"
+        @sortSelected="handleSortSelected"
         @handlePageChange="fetching"
         :totalCount="totalCount"
         :size="size"
@@ -136,6 +137,7 @@ export default defineComponent({
     const selectedRoles = ref([]);
     const selectedBrands = ref([]);
     const selectedBranches = ref([]);
+    const sortState = ref<any>(null);
     const deleteItems = ref<Array<number>>([]);
 
     const selectedUsers = ref<Array<number>>([]);
@@ -227,31 +229,37 @@ export default defineComponent({
     });
 
     const initPage = () => {
-      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value)
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value, sortState.value)
       selectedUsers.value = [];
     };
     const handleSearch = (value: any) => {
       searchValue.value = value;
     };
     watch(searchValue, (searchValue) => {
-      fetching(1, searchValue, [], [], [])
+      fetching(1, searchValue, [], [], [], sortState.value)
       selectedUsers.value = [];
     });
 
     watch(selectedRoles, (selectedRoles) => {
-      fetching(1, searchValue.value, selectedRoles, selectedBrands.value, selectedBranches.value)
+      fetching(1, searchValue.value, selectedRoles, selectedBrands.value, selectedBranches.value, sortState.value)
       selectedUsers.value = [];
     });
 
     watch(selectedBrands, (selectedBrands) => {
-      fetching(1, searchValue.value, selectedRoles.value, selectedBrands, selectedBranches.value)
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands, selectedBranches.value, sortState.value)
       selectedUsers.value = [];
     });
 
     watch(selectedBranches, (selectedBranches) => {
-      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches)
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches, sortState.value)
       selectedUsers.value = [];
     });
+
+    const handleSortSelected = (sortState: any) => {
+      sortState.value=sortState
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value, sortState.value)
+      console.log("sortState",sortState)
+    }
 
     const editRoleAction = (data: any) => {
       const requestOptions = {
@@ -518,7 +526,7 @@ export default defineComponent({
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          id: dataBody.id,
+          user_id: dataBody.id,
           phone: dataBody.telephoneNumber.replace(/\s/g, ''),
           first_name: dataBody.firstName,
           last_name: dataBody.lastName,
@@ -610,6 +618,7 @@ export default defineComponent({
       onEditUser,
       branches,
       brands,
+      handleSortSelected,
       roleOptions: [
         {text: "Админ", value: "owner"},
         {text: "Директор", value: "branch_director"},
@@ -617,9 +626,9 @@ export default defineComponent({
       ],
       tableColumns: [
         {key: 'id', label: 'ID', width: '56px'},
-        {key: 'fullName', label: 'ФИО', width: '216px'},
+        {key: 'fullName', label: 'ФИО', width: '216px', withSort: true},
         {key: 'phone', label: 'Номер телефона', width: '168px'},
-        {key: 'branch', label: 'Филиал', width: '188px'},
+        {key: 'branch', label: 'Филиал', width: '188px', withSort: true},
         {key: 'brand', label: 'Бренд', width: '140px'},
         {key: 'role', label: 'Роль', width: '198px'}
       ],

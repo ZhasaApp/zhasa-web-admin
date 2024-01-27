@@ -5,7 +5,7 @@
       <tr>
         <th :style="{width: '52px'}"></th>
         <th v-for="(column, index) in columns" :key="index" :style="{width: column.width}">
-          {{ column.label }}
+          {{ column.label }}<sort-icon v-show="column.withSort" @update:sort="handleSort" :columnName="column.key" :mainSortState="currentSortState" />
         </th>
         <th :style="{width: '52px'}"></th>
       </tr>
@@ -90,11 +90,13 @@
 
 <script lang="ts">
 import {defineComponent, PropType, ref, watch} from 'vue';
+import SortIcon from "./SortIcon.vue";
 
 interface TableColumn {
   key: string;
   label: string;
   width: string;
+  withSort: boolean;
 }
 
 interface TableRow {
@@ -103,6 +105,9 @@ interface TableRow {
 
 export default defineComponent({
   name: 'TableData',
+  components: {
+    SortIcon
+  },
   props: {
     tableData: {
       type: Array as PropType<TableRow[]>,
@@ -132,6 +137,7 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const currentPage = ref(1);
+    const currentSortState = ref<any>(null)
     const selectedIndex = ref<number>(-1);
     const roleOptions = [
       {text: "Админ", value: "owner"},
@@ -175,6 +181,10 @@ export default defineComponent({
     const handleRole = (role: string, index: number) => {
       emit('onRoleSelected', role, props.tableData[index]);
     }
+    const handleSort = (sortState: any) => {
+      currentSortState.value = sortState
+      emit('sortSelected', sortState)
+    }
 
     return {
       currentPage,
@@ -184,7 +194,9 @@ export default defineComponent({
       toggleSelection,
       getRoleText,
       onRowSelected,
-      handleRole
+      handleRole,
+      handleSort,
+      currentSortState
     }
   }
 });
