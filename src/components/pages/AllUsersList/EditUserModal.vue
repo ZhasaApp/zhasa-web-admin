@@ -12,42 +12,46 @@
             @input="validate"
             class="inputTelephone"
         />
-        <a-select
-            v-model="selectedRole"
-            :defaultValue="selectedRole"
-            placeholder="Выберите роль"
-            style="width: 100%;"
-            :options="roleOptions.map(role => ({ label: role.title, value: role.value }))"
-            @change="onRoleSelected($event)"
-        ></a-select>
-        <a-select
-            v-model="selectedBranchId"
-            v-show="selectedRole == 'branch_director' || selectedRole == 'sales_manager'"
-            show-search
-            placeholder="Выберите филиал"
-            style="width: 100%; margin: 24px auto"
-            :options="branches?.map((branch: any) => ({
-              label: branch.description.toString(),
-              value: branch.id.toString() ,
-              }))"
-            :filter-option="filterOption"
-            @change="onBranchSelected($event)"
-        ></a-select>
-        <a-select
-            v-model="selectedBrandsIds"
-            mode="multiple"
-            v-show="selectedRole == 'branch_director' || selectedRole == 'sales_manager'"
-            show-search
-            placeholder="Выберите бренд"
-            class="selector-with_multiple-select"
-            :options="brands?.map((branch: any) => ({
+        <template v-if="(defaultOption?.role?.length ?? 0) > 0">
+          <a-select
+              v-model="selectedRole"
+              :defaultValue="defaultOption.role"
+              placeholder="Выберите роль"
+              style="width: 100%;"
+              :options="roleOptions.map(role => ({ label: role.title, value: role.value }))"
+              @change="onRoleSelected($event)"
+          ></a-select>
+        </template>
+        <template v-if="(defaultOption?.role?.length ?? 0) && defaultOption.role != 'owner'">
+          <a-select
+              v-model="selectedBranchId"
+              :defaultValue="defaultOption.branchId"
+              show-search
+              placeholder="Выберите филиал"
+              style="width: 100%; margin: 24px auto"
+              :options="branches?.map((branch: any) => ({
               label: branch.title.toString(),
-              value: branch.id.toString() ,
+              value: branch.id,
               }))"
-            :filter-option="filterOption"
-            @change="onBrandSelected($event)"
-            showArrow
-        ></a-select>
+              :filter-option="filterOption"
+              @change="onBranchSelected($event)"
+          ></a-select>
+          <a-select
+              v-model="selectedBrandsIds"
+              mode="multiple"
+              :defaultValue="defaultOption.brandIds"
+              show-search
+              placeholder="Выберите бренд"
+              class="selector-with_multiple-select"
+              :options="brands?.map((branch: any) => ({
+              label: branch.title.toString(),
+              value: branch.id,
+              }))"
+              :filter-option="filterOption"
+              @change="onBrandSelected($event)"
+              showArrow
+          ></a-select>
+        </template>
         <a-alert type="error" style="margin-top: 16px" :message="errorMessage" show-icon
                  v-if="(errorMessage?.length ??0)>0"/>
         <div class="button-box">
@@ -72,7 +76,7 @@
 </template>
 <script lang="ts">
 
-import {defineComponent, PropType, ref, watch, onMounted, getCurrentInstance} from "vue";
+import {defineComponent, PropType, ref, watch} from "vue";
 import {vMaska} from "maska"
 import CustomButton from "../../common/CustomButton.vue";
 import CustomModal from "../../common/CustomModal.vue";
@@ -95,14 +99,18 @@ export default defineComponent({
     errorMessage: String,
     brands: Array,
     branches: Array,
-    user: Object
+    user: Object,
+    defaultOption: {
+      type: Object,
+      required: true
+    }
   },
   setup(props) {
     const firstName = ref("");
     const lastName = ref("");
     const telephoneNumber = ref("");
-    const selectedRole = ref('sales_manager');
-    const selectedBranchId = ref<number>();
+    const selectedRole = ref('');
+    const selectedBranchId = ref<any>(null);
     const selectedBrandsIds = ref<Array<number>>([])
     const isAllDataEntered = ref(false)
     const roleOptions = [
@@ -111,26 +119,34 @@ export default defineComponent({
       {title: "Менеджер", value: "sales_manager"}
     ]
 
-    watch(() => props.user, (user) => {
-      console.log(user)
+    watch(() => props.user, (user: any) => {
+      console.log("watch=", user)
       firstName.value = user.first_name
       lastName.value = user.last_name
       telephoneNumber.value = user.phone
-      // selectedRole.value = user.role
+      selectedRole.value = user.role
+      const branchID = props.branches.find((it: any) => it.title == user.branch_title)?.id
+      selectedBranchId.value = branchID
+      const brandIds = []
+      for (let i = 0; i < user.brands.length; i++) {
+        for (let j = 0; j < props.brands.length;  j++) {
+          if (user.brands[i] == props.brands[j].title) {
+            brandIds.push(props.brands[j].id)
+            break;
+          }
+        }
+      }
+      selectedBrandsIds.value = brandIds
+      validate()
     });
 
-    watch(() => props.editModalActive, () => {
-      selectedRole.value = '';
-    });
-    watch(selectedRole, () => {
-
-    });
     const filterOption = (input: string, option: any) => {
       return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
 
     const onRoleSelected = (value: string) => {
       selectedRole.value = value
+      props.defaultOption.role = value
       validate()
     }
 
@@ -145,6 +161,12 @@ export default defineComponent({
     }
 
     const validate = () => {
+      console.log("firstName",firstName.value)
+      console.log("lastName",lastName.value)
+      console.log("telephoneNumber",telephoneNumber.value)
+      console.log("selectedRole",selectedRole.value)
+      console.log("selectedBranchId",selectedBranchId.value)
+      console.log("selectedBrandsIds",selectedBrandsIds.value)
       if (firstName.value.length > 0 && lastName.value.length > 0 && telephoneNumber.value.length == 16 &&
           selectedRole.value.length > 0 && (selectedRole.value == "owner" ? true : selectedBranchId.value && selectedBrandsIds.value.length > 0)) {
         isAllDataEntered.value = true

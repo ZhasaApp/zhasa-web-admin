@@ -55,6 +55,7 @@
       :branches="branches"
       :errorMessage="errorMessage"
       :user="selectedEditUser"
+      :defaultOption="selectedEditUserDefaultOption"
   />
   <ChangeRole
       :modalActive="editRoleModalActive"
@@ -112,12 +113,6 @@ export default defineComponent({
     ChangeBranchModal,
     ChangeBrandModal, ActionsBlock, ChangeRole, AddManagerRoleModal, CreatUserModal, TableData, HeaderBar
   },
-  data() {
-    return {
-      branches: [],
-      brands: []
-    }
-  },
   mounted() {
     const headers = {
       'Authorization': TOKEN,
@@ -134,6 +129,8 @@ export default defineComponent({
   },
   setup() {
     const pureUserList = ref<Array<any>>([])
+    const branches = ref<Array<any>>([])
+    const brands = ref<Array<any>>([])
 
     const searchValue = ref('');
     const selectedRoles = ref([]);
@@ -149,6 +146,7 @@ export default defineComponent({
     const deleteModalActive = ref(false)
     const editModalActive = ref(false)
     const selectedEditUser = ref<any>(null)
+    const selectedEditUserDefaultOption = ref<any>(null)
 
     watch(selectedUsers, (newVal) => {
       if (newVal.length === usersTableData.value.length && usersTableData.value.length != 0) {
@@ -281,11 +279,11 @@ export default defineComponent({
           })
           .catch(error => {
             setTimeout(() => {
-                errorMessage.value = data.error;
-                setTimeout(() => {
-                  errorMessage.value = "";
-                }, 3000);
-              }, 200);
+              errorMessage.value = data.error;
+              setTimeout(() => {
+                errorMessage.value = "";
+              }, 3000);
+            }, 200);
             console.error("There was an error!", error);
           });
     }
@@ -305,7 +303,27 @@ export default defineComponent({
     }
 
     const onUserEdit = (user: any) => {
-      selectedEditUser.value = pureUserList.value.find(item => item.id == user.id)
+      const pureUser = pureUserList.value.find(item => item.id == user.id)
+      console.log(pureUser)
+      selectedEditUser.value = pureUser
+      console.log("pureUser.brands=", pureUser.brands)
+      const branchID = branches.value.find((it: any) => it.title == pureUser.branch_title)?.id
+      const brandIds = []
+      for (let i = 0; i < pureUser.brands.length; i++) {
+        for (let j = 0; j < brands.value.length; j++) {
+          if (pureUser.brands[i] == brands.value[j].title) {
+            brandIds.push(brands.value[j].id)
+            break;
+          }
+        }
+      }
+      console.log("brandIds=",brandIds)
+      console.log("branchID=",branchID)
+      selectedEditUserDefaultOption.value = {
+        role: user.role,
+        brandIds: brandIds,
+        branchId: branchID
+      }
       editToggleModal()
     }
 
@@ -365,11 +383,11 @@ export default defineComponent({
           })
           .catch(error => {
             setTimeout(() => {
-                errorMessage.value = data.error;
-                setTimeout(() => {
-                  errorMessage.value = "";
-                }, 3000);
-              }, 200);
+              errorMessage.value = data.error;
+              setTimeout(() => {
+                errorMessage.value = "";
+              }, 3000);
+            }, 200);
             console.error("There was an error!", error);
           });
     }
@@ -400,11 +418,11 @@ export default defineComponent({
           })
           .catch(error => {
             setTimeout(() => {
-                errorMessage.value = data.error;
-                setTimeout(() => {
-                  errorMessage.value = "";
-                }, 3000);
-              }, 200);
+              errorMessage.value = data.error;
+              setTimeout(() => {
+                errorMessage.value = "";
+              }, 3000);
+            }, 200);
             console.error("There was an error!", error);
           });
     }
@@ -548,6 +566,9 @@ export default defineComponent({
 
     const editToggleModal = () => {
       editModalActive.value = !editModalActive.value;
+      if (editModalActive.value == false) {
+        selectedEditUserDefaultOption.value = null
+      }
     }
 
     return {
@@ -587,6 +608,8 @@ export default defineComponent({
       editModalActive,
       editToggleModal,
       onEditUser,
+      branches,
+      brands,
       roleOptions: [
         {text: "Админ", value: "owner"},
         {text: "Директор", value: "branch_director"},
@@ -611,12 +634,11 @@ export default defineComponent({
       errorMessage,
       showAlert,
       createUserModalToggler,
-      selectedEditUser
+      selectedEditUser,
+      selectedEditUserDefaultOption
     }
   },
-  watch: {
-
-  }
+  watch: {}
 });
 </script>
 
