@@ -1,12 +1,31 @@
 import axios from 'axios';
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, onBeforeUnmount} from 'vue';
 import {TOKEN} from "../components/constants.ts";
 
 function useAllUsersWithRoles() {
     const users = ref<any[]>([]);
     const isLoading = ref(true);
     let totalCount = ref(0);
-    const size = 12
+    const rowHeight = 57; // Adjust this to match your row height
+    const size = ref(12); // Default value, will be updated based on viewport
+
+    const calculateSize = () => {
+        const viewportHeight = window.innerHeight;
+        size.value = Math.floor((viewportHeight-310) / rowHeight);
+    };
+
+    // Add window resize event listener
+    onMounted(() => {
+        calculateSize();
+        window.addEventListener('resize', calculateSize);
+        fetching(1, '', [], [], []); // Initial fetch
+    });
+
+    onBeforeUnmount(() => {
+        window.removeEventListener('resize', calculateSize);
+    });
+
+
     const headers = {
         'Authorization': TOKEN,
     };
@@ -16,7 +35,7 @@ function useAllUsersWithRoles() {
             const brandsParams = brandsFilter.map(key => `brand_ids=${encodeURIComponent(key)}`).join('&');
             const branchesParams = branchesFilter.map(key => `branch_ids=${encodeURIComponent(key)}`).join('&');
             const response = await axios.get<ResponseType>(
-                `http://185.182.219.90/admin/users?page=${page - 1}&size=${size}&search=${searchValue}&${roleKeysParams}&${brandsParams}&${branchesParams}`,
+                `http://185.182.219.90/admin/users?page=${page - 1}&size=${size.value}&search=${searchValue}&${roleKeysParams}&${brandsParams}&${branchesParams}`,
                 {
                     headers
                 }
