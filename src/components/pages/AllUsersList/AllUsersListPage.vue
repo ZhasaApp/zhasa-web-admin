@@ -280,7 +280,12 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
-            errorMessage.value = data.error;
+            setTimeout(() => {
+                errorMessage.value = data.error;
+                setTimeout(() => {
+                  errorMessage.value = "";
+                }, 3000);
+              }, 200);
             console.error("There was an error!", error);
           });
     }
@@ -328,7 +333,7 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
-            errorMessage.value = data.error;
+            errorMessage.value = error.error;
             console.error("There was an error!", error);
           });
     }
@@ -359,7 +364,12 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
-            errorMessage.value = data.error;
+            setTimeout(() => {
+                errorMessage.value = data.error;
+                setTimeout(() => {
+                  errorMessage.value = "";
+                }, 3000);
+              }, 200);
             console.error("There was an error!", error);
           });
     }
@@ -389,7 +399,12 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
-            errorMessage.value = data.error;
+            setTimeout(() => {
+                errorMessage.value = data.error;
+                setTimeout(() => {
+                  errorMessage.value = "";
+                }, 3000);
+              }, 200);
             console.error("There was an error!", error);
           });
     }
@@ -419,7 +434,7 @@ export default defineComponent({
             initPage()
           })
           .catch(error => {
-            errorMessage.value = data.error;
+            errorMessage.value = error.error;
             console.error("There was an error!", error);
           });
     }
@@ -452,8 +467,12 @@ export default defineComponent({
 
             if (!response.ok) {
               const error = (data && data.error) || response;
-              console.log("!@£", data)
-              errorMessage.value = data.error;
+              setTimeout(() => {
+                errorMessage.value = data.error;
+                setTimeout(() => {
+                  errorMessage.value = "";
+                }, 3000);
+              }, 200);
               return Promise.reject(error);
             }
             createdUserId.value = data;
@@ -468,7 +487,7 @@ export default defineComponent({
             }, 200);
           })
           .catch(error => {
-            errorMessage.value = data.error;
+            errorMessage.value = error.error;
             console.error("There was an error!", error);
           });
     }
@@ -498,7 +517,12 @@ export default defineComponent({
             if (!response.ok) {
               const error = (data && data.message) || response.status;
               console.log("HERE IT IS", error)
-              errorMessage.value = data.error;
+              setTimeout(() => {
+                errorMessage.value = data.error;
+                setTimeout(() => {
+                  errorMessage.value = "";
+                }, 3000);
+              }, 200);
               return Promise.reject(error);
             }
             createdUserId.value = data;
@@ -513,7 +537,7 @@ export default defineComponent({
             }, 200);
           })
           .catch(error => {
-            errorMessage.value = data.error;
+            errorMessage.value = error.error;
             console.error("There was an error!", error);
           });
     }
@@ -589,6 +613,9 @@ export default defineComponent({
       createUserModalToggler,
       selectedEditUser
     }
+  },
+  watch: {
+
   }
 });
 </script>
