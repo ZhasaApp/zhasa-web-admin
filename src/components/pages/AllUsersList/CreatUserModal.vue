@@ -20,6 +20,7 @@
         ></a-select>
         <a-select
             v-model="selectedBranchId"
+            v-show="selectedRole == 'branch_director' || selectedRole == 'sales_manager'"
             show-search
             placeholder="Выберите филиал"
             style="width: 100%; margin: 24px auto"
@@ -33,6 +34,7 @@
         <a-select
             v-model="selectedBrandsIds"
             mode="multiple"
+            v-show="selectedRole == 'branch_director' || selectedRole == 'sales_manager'"
             show-search
             placeholder="Выберите бренд"
             class="selector-with_multiple-select"
@@ -45,20 +47,22 @@
             showArrow
         ></a-select>
         <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
-        <CustomButton
-            type="submit"
-            :additional-styles="{marginBottom : '24px', opacity: `${ isAllDataEntered ? '1' : '0.5'}`,}"
-            :disabled="!isAllDataEntered"
-        >
-          Создать
-        </CustomButton>
-        <CustomButton
-            @click="toggleModal"
-            type="button"
-            :additional-styles="{color: '#333', border: '1px solid #999', opacity: '0.5', background: '#FFF'}"
-        >
-          Закрыть
-        </CustomButton>
+        <div class="button-box">
+          <CustomButton
+              @click="toggleModal"
+              type="button"
+              :additional-styles="{color: '#333', border: '1px solid #999', opacity: '0.5', background: '#FFF'}"
+          >
+            Закрыть
+          </CustomButton>
+          <CustomButton
+              type="submit"
+              :additional-styles="{opacity: `${ isAllDataEntered ? '1' : '0.5'}`,}"
+              :disabled="!isAllDataEntered"
+          >
+            Создать
+          </CustomButton>
+        </div>
       </form>
     </div>
   </CustomModal>
@@ -101,6 +105,9 @@ export default defineComponent({
     watch(() => props.modalActive, () => {
       selectedRole.value = '';
     });
+    watch(selectedRole, () => {
+
+    });
     const filterOption = (input: string, option: any) => {
       return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
@@ -122,7 +129,7 @@ export default defineComponent({
 
     const validate = () => {
       if (firstName.value.length > 0 && lastName.value.length > 0 && telephoneNumber.value.length == 16 &&
-          selectedRole.value.length > 0 && selectedBranchId.value && selectedBrandsIds.value.length > 0) {
+          selectedRole.value.length > 0 && (selectedRole.value == "owner" ? true : selectedBranchId.value && selectedBrandsIds.value.length > 0)) {
         isAllDataEntered.value = true
       } else isAllDataEntered.value = false
     }
@@ -195,4 +202,12 @@ export default defineComponent({
 input::placeholder {
   color: #4D4D4D;
 }
+
+.button-box {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+
 </style>

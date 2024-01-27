@@ -205,8 +205,8 @@ export default defineComponent({
           fullName: `${user.first_name} ${user.last_name}`,
           phone: `${user.phone.slice(0, 2)} ${user.phone.slice(2, 5)} ${user.phone.slice(5, 8)}
           ${user.phone.slice(8, 10)} ${user.phone.slice(10)}`,
-          branch: `${user.branch_title ?? '-'}`,
-          brand: `${user.brands.join(', ')}`,
+          branch: `${user.role == "owner" ? '-' : user.branch_title ?? '-'}`,
+          brand: `${user.role == "owner" ? '-' : user.brands.join(', ')}`,
           role: user.role
         };
       });

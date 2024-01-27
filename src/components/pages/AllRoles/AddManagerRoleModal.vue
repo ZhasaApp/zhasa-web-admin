@@ -152,7 +152,6 @@ export default defineComponent({
 
 .selector-with_multiple-select {
   width: 100%;
-  margin-bottom: 24px;
 
   .ant-select-selection-item {
     padding: 0 !important;
