@@ -26,7 +26,7 @@
             placeholder="Выберите филиал"
             style="width: 100%; margin: 24px auto"
             :options="branches?.map((branch: any) => ({
-              label: branch.description.toString(),
+              label: branch.title.toString(),
               value: branch.id.toString() ,
               }))"
             :filter-option="filterOption"

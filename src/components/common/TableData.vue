@@ -76,14 +76,17 @@
       </tr>
       </tbody>
     </table>
-    <div class="table-footer">
-      <a-pagination
-          v-model:current="currentPage"
-          :total="totalCount"
-          :default-page-size="size"
-          :showSizeChanger="false"
-          @change="$emit('handlePageChange', currentPage, searchValue, filterRoles, filterBrands, filterBranches)"
-      />
+    <div class="bottom-bar">
+      <div class="table-footer">
+        <span>Всего пользователей: <b>{{totalCount}}</b></span>
+        <a-pagination
+            v-model:current="currentPage"
+            :total="totalCount"
+            :default-page-size="size"
+            :showSizeChanger="false"
+            @change="$emit('handlePageChange', currentPage, searchValue, filterRoles, filterBrands, filterBranches)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -290,11 +293,18 @@ thead {
   box-sizing: border-box;
 }
 
+.bottom-bar {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+
 .table-footer {
   display: flex;
-  left: 50%;
-  justify-content: right;
+  justify-content: space-between;
+  font-size: 14px;
   margin: 20px auto;
+  align-items: center;
 }
 
 .table-vmenu .v-list-item--density-default.v-list-item--one-line{
@@ -322,6 +332,16 @@ thead {
   min-height: 0;
   height: 40px;
 }
+
+.ant-pagination-item-active {
+  border-color: #1CB5C2 !important;
+  color: #1CB5C2 !important;
+}
+
+.ant-pagination-item-active a {
+  color: #1CB5C2 !important;
+}
+
 
 </style>
 

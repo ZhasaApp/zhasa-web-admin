@@ -11,7 +11,7 @@ function useAllUsersWithRoles() {
 
     const calculateSize = () => {
         const viewportHeight = window.innerHeight;
-        size.value = Math.floor((viewportHeight-310) / rowHeight);
+        size.value = Math.floor((viewportHeight-300) / rowHeight);
     };
 
     // Add window resize event listener

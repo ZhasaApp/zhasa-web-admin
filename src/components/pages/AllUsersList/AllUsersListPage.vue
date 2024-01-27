@@ -654,6 +654,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .content-body {
   padding-top: 24px;
+  position: relative;
 }
 
 .success-alert {
