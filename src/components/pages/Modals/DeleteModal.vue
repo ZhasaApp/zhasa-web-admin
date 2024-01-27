@@ -46,7 +46,7 @@ export default defineComponent({
 
     const modalTitle = ref("")
 
-    watch(() => props.deleteItems, (newVal) => {
+    watch(() => props.deleteItems, (newVal: any) => {
       modalTitle.value = newVal.length === 1 ? "Вы действительно хотите удалить пользователя?" : "Вы действительно хотите удалить пользователей?"
     })
 

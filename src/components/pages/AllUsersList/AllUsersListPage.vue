@@ -625,12 +625,12 @@ export default defineComponent({
         {text: "Менеджер", value: "sales_manager"}
       ],
       tableColumns: [
-        {key: 'id', label: 'ID', width: '56px'},
+        {key: 'id', label: 'ID', width: '56px', withSort: false},
         {key: 'fullName', label: 'ФИО', width: '216px', withSort: true},
-        {key: 'phone', label: 'Номер телефона', width: '168px'},
+        {key: 'phone', label: 'Номер телефона', width: '168px', withSort: false},
         {key: 'branch', label: 'Филиал', width: '188px', withSort: true},
-        {key: 'brand', label: 'Бренд', width: '140px'},
-        {key: 'role', label: 'Роль', width: '198px'}
+        {key: 'brand', label: 'Бренд', width: '140px', withSort: false},
+        {key: 'role', label: 'Роль', width: '198px', withSort: false}
       ],
       onRoleSelected,
       onUserDelete,

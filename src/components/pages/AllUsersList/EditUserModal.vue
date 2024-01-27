@@ -1,7 +1,7 @@
 <template>
   <CustomModal @close.prevent="editToggleModal" :modalActive="editModalActive" :modal-title="modalTitle">
     <div class="modal-content">
-      <form @submit.prevent="onCreateButtonClick">
+      <form @submit.prevent="onSaveButtonClick(user?.id ?? 0)">
         <input placeholder="Имя" type="text" v-model="firstName" @input="validate" class="inputFirstName"/>
         <input placeholder="Фамилия" type="text" v-model="lastName" @input="validate" class="inputLastName"/>
         <input
@@ -119,19 +119,24 @@ export default defineComponent({
       {title: "Менеджер", value: "sales_manager"}
     ]
 
+    const brands = ref<Array<any>>(props?.brands ?? [])
+    const branches = ref<Array<any>>(props?.branches ?? [])
+
     watch(() => props.user, (user: any) => {
-      console.log("watch=", user)
+      brands.value = props?.brands ?? []
+      branches.value = props?.branches ?? []
+
       firstName.value = user.first_name
       lastName.value = user.last_name
       telephoneNumber.value = user.phone
       selectedRole.value = user.role
-      const branchID = props.branches.find((it: any) => it.title == user.branch_title)?.id
+      const branchID = branches.value.find((it: any) => it.title == user.branch_title)?.id
       selectedBranchId.value = branchID
       const brandIds = []
       for (let i = 0; i < user.brands.length; i++) {
-        for (let j = 0; j < props.brands.length;  j++) {
-          if (user.brands[i] == props.brands[j].title) {
-            brandIds.push(props.brands[j].id)
+        for (let j = 0; j < brands.value.length;  j++) {
+          if (user.brands[i] == brands.value[j].title) {
+            brandIds.push(brands.value[j].id)
             break;
           }
         }
@@ -202,7 +207,7 @@ export default defineComponent({
     }
   },
   methods: {
-    onCreateButtonClick() {
+    onSaveButtonClick(userId: number) {
       console.log("firstName=", this.firstName)
       console.log("lastName=", this.lastName)
       console.log("telephoneNumber=", this.telephoneNumber)
@@ -216,7 +221,7 @@ export default defineComponent({
         role: this.selectedRole,
         brand_ids: this.selectedBrandsIds,
         branch_id: this.selectedBranchId,
-        id: this.$props.user.id
+        id: userId
       })
     }
   }

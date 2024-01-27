@@ -7,12 +7,12 @@
           <v-btn
               color="primary"
               v-bind="props"
-              :variant="selectedUsers.length > 0 ? 'tonal' : 'none'"
-              :disabled="selectedUsers.length === 0"
+              :variant="(selectedUsers?.length ?? 0) > 0 ? 'tonal' : 'text'"
+              :disabled="(selectedUsers?.length ?? 0) === 0"
               style="width: 270px; text-align: left"
           >
-            {{ selectedUsers.length > 0 ? 'Выбрано пользователей ' + selectedUsers.length + '  ' : 'Выбрать все' }}
-            <v-icon v-if="selectedUsers.length > 0">mdi-chevron-down</v-icon>
+            {{(selectedUsers?.length ?? 0) > 0 ? 'Выбрано пользователей ' + (selectedUsers?.length ?? 0) + '  ' : 'Выбрать все' }}
+            <v-icon v-if="(selectedUsers?.length ?? 0) > 0">mdi-chevron-down</v-icon>
           </v-btn>
         </template>
         <v-list>

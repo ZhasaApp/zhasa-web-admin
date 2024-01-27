@@ -8,10 +8,6 @@ const router = createRouter({
             component: () => import("../components/pages/AllUsersList/AllUsersListPage.vue")
         },
         {
-            path: '/zhasa-web-admin/roles',
-            component: () => import("../components/pages/AllRoles/RolesPage.vue")
-        },
-        {
             path: '/zhasa-web-admin/roles/personalData',
             component: () => import("../components/pages/PersonalDataPage/PersonalDataPage.vue")
         }

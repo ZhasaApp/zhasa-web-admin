@@ -4,10 +4,12 @@
   </v-icon>
 </template>
 
-<script>
-import {defineComponent} from "vue";
+<script lang="ts">
+
+import {defineComponent} from 'vue';
 
 export default defineComponent ({
+  name: 'SortIcon',
   props: {
     columnName: {
       type: String,
@@ -42,5 +44,5 @@ export default defineComponent ({
       this.$emit('update:sort', { sortState: this.currentSortState, columnName: this.columnName });
     }
   }
-})
+});
 </script>
