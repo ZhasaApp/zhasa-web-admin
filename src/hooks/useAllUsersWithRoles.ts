@@ -12,9 +12,6 @@ function useAllUsersWithRoles() {
     };
     const fetching = async (page: number, searchValue: string, roleKeys: string[], brandsFilter: string[], branchesFilter: string[]): Promise<void> => {
         try {
-            console.log("roleKeys", roleKeys)
-            console.log("brandsFilter", brandsFilter)
-            console.log("branchesFilter", branchesFilter)
             const roleKeysParams = roleKeys.map(key => `role_keys=${encodeURIComponent(key)}`).join('&');
             const brandsParams = brandsFilter.map(key => `brand_ids=${encodeURIComponent(key)}`).join('&');
             const branchesParams = branchesFilter.map(key => `branch_ids=${encodeURIComponent(key)}`).join('&');

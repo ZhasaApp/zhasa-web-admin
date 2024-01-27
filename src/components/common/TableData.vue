@@ -23,19 +23,37 @@
         </td>
         <td v-for="(column, columnIndex) in columns" :key="columnIndex">
           <v-select
+              class="table-vselect"
               v-if="column.key === 'role'"
               :items="roleOptions"
               item-title="text"
               item-value="value"
               :placeholder="getRoleText(row.role)"
               variant="outlined"
-              style="width: 105px"
+              style="width: 105px;"
+              @click="onRowSelected(rowIndex)"
           >
+            <template v-slot:item="{ item }" style="">
+              <v-list-item
+                  style="padding: 0 12px"
+                  @click="handleRole(item.value, rowIndex)">
+                <v-list-item-icon>
+                  <v-icon v-if="row.role === item.value">mdi-check</v-icon>
+                </v-list-item-icon>
+                <v-list-item-icon>
+                  <v-icon v-if="row.role !== item.value" style="opacity: 0">mdi-check</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content
+                    style="padding-left: 8px; font-size: 14px; margin: 0; font-weight: 400">
+                  {{item.title}}
+                </v-list-item-content>
+              </v-list-item>
+            </template>
           </v-select>
           <span v-else>{{ row[column.key] }}</span>
         </td>
         <td>
-          <v-menu>
+          <v-menu class="table-vmenu">
             <template v-slot:activator="{ props }">
               <v-btn
                   icon
@@ -47,10 +65,10 @@
             </template>
             <v-list>
               <v-list-item @click="handleEdit(rowIndex)">
-                <v-list-item-content>Редактировать</v-list-item-content>
+                <v-list-item-content style="color: black; font-size: 14px; padding: 0">Редактировать</v-list-item-content>
               </v-list-item>
               <v-list-item @click="handleDelete(rowIndex)" color="red">
-                <v-list-item-content>Удалить</v-list-item-content>
+                <v-list-item-content style="color: red; font-size: 14px; padding: 0">Удалить</v-list-item-content>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -114,6 +132,7 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const currentPage = ref(1);
+    const selectedIndex = ref<number>(-1);
     const roleOptions = [
       {text: "Админ", value: "owner"},
       {text: "Директор", value: "branch_director"},
@@ -132,58 +151,41 @@ export default defineComponent({
       currentPage.value = 1
     })
 
-    const menu = ref<Array<boolean>>([]);
-
-    const toggleMenu = (rowIndex: number, event: MouseEvent) => {
-      menu.value[rowIndex] = !menu.value[rowIndex];
-      event.preventDefault();
+    const onRowSelected = (rowIndex: number) => {
+      selectedIndex.value = rowIndex
     };
 
-    const handleEdit = (rowIndex: number) => {
-      menu.value[rowIndex] = false;
-      // Handle edit action for the specific row
+    const handleEdit = (index: number) => {
+      emit('onUserEdit', props.tableData[index]);
     };
 
-    const handleDelete = (rowIndex: number) => {
-      menu.value[rowIndex] = false;
-      // Handle delete action for the specific row
+    const handleDelete = (index: number) => {
+      emit('onUserDelete', props.tableData[index]);
     };
 
     const toggleSelection = (rowIndex: number) => {
-      console.log("TOGGLE")
       emit('toggleSelection', rowIndex);
     };
 
     const getRoleText = (roleValue: string) => {
       const role = roleOptions.find((option: any) => option.value === roleValue);
-      return role ? role.text : 'Select Role';
+      return (role ? role.text : 'Select Role').toUpperCase();
     };
+
+    const handleRole = (role: string, index: number) => {
+      emit('onRoleSelected', role, props.tableData[index]);
+    }
 
     return {
       currentPage,
       roleOptions,
-      column: {key: 'role'},
-      items: [
-        {title: 'Редактировать'},
-        {title: 'Click Me'},
-      ],
-      menu,
-      toggleMenu,
       handleEdit,
       handleDelete,
       toggleSelection,
-      getRoleText
+      getRoleText,
+      onRowSelected,
+      handleRole
     }
-  },
-  methods: {
-    editItem() {
-      // Add your edit logic here
-      console.log('Edit clicked');
-    },
-    deleteItem() {
-      // Add your delete logic here
-      console.log('Delete clicked');
-    },
   }
 });
 </script>
@@ -199,7 +201,7 @@ export default defineComponent({
 td .v-text-field input::placeholder, td .v-select__selection-text {
   color: #000;
   opacity: 1.0;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 10px;
 }
 
@@ -282,4 +284,32 @@ thead {
   justify-content: right;
   margin: 20px auto;
 }
+
+.table-vmenu .v-list-item--density-default.v-list-item--one-line{
+  min-height: 0;
+  height: 40px;
+  padding: 12px;
+}
+
+.table-vmenu .v-list{
+  padding: 0;
+}
+
+.table-vselect .v-list-item--density-default.v-list-item--one-line {
+  min-height: 0;
+  height: 40px;
+  padding: 12px;
+}
+
+.table-vselect .v-list{
+  padding: 0;
+}
+
+
+.v-overlay-container .v-list-item--density-default.v-list-item--one-line {
+  min-height: 0;
+  height: 40px;
+}
+
 </style>
+

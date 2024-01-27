@@ -15,6 +15,9 @@
         @updateBrandsFilter="handleUpdateBrandsFilter"
         @updateBranchesFilter="handleUpdateBranchesFilter"
         @editRoleClicked="handleRoleUpdate"
+        @editBrandClicked="handleBrandUpdate"
+        @editBranchClicked="handleBranchUpdate"
+        @deleteUserClicked="handleDelete"
         @toggleAll="toggleAll"
         :selectedUsers="selectedUsers"
     />
@@ -78,6 +81,15 @@ export default defineComponent({
     const handleRoleUpdate = () =>{
       emit('editRoleClicked')
     }
+    const handleBrandUpdate = () =>{
+      emit('editBrandClicked')
+    }
+    const handleBranchUpdate = () =>{
+      emit('editBranchClicked')
+    }
+    const handleDelete = () =>{
+      emit('deleteUserClicked')
+    }
 
     const toggleAll = () => {
       emit('toggleAll');
@@ -91,7 +103,10 @@ export default defineComponent({
       handleUpdateBrandsFilter,
       handleUpdateBranchesFilter,
       handleRoleUpdate,
-      toggleAll
+      handleBrandUpdate,
+      handleBranchUpdate,
+      toggleAll,
+      handleDelete
     };
   }
 });

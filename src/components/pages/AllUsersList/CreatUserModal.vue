@@ -2,24 +2,21 @@
   <CustomModal @close.prevent="toggleModal" :modalActive="modalActive" :modal-title="modalTitle">
     <div class="modal-content">
       <form @submit.prevent="onCreateButtonClick">
-        <input placeholder="Имя" type="text" v-model="firstName" @input="checkForData" class="inputFirstName"/>
-        <input placeholder="Фамилия" type="text" v-model="lastName" @input="checkForData" class="inputLastName"/>
+        <input placeholder="Имя" type="text" v-model="firstName" @input="validate" class="inputFirstName"/>
+        <input placeholder="Фамилия" type="text" v-model="lastName" @input="validate" class="inputLastName"/>
         <input
             placeholder="+7 ___ ___ __ __"
             v-maska
             data-maska="+7 ### ### ## ##"
             v-model="telephoneNumber"
-            @input="checkForData"
+            @input="validate"
             class="inputTelephone"
         />
         <a-select
-            v-model="selectedBranchId"
-            show-search
             placeholder="Выберите роль"
             style="width: 100%;"
-            :options="roleOptions"
-            :filter-option="filterOption"
-            @change="handleBranchChange"
+            :options="roleOptions.map(role => ({ label: role.title, value: role.value }))"
+            @change="onRoleSelected($event)"
         ></a-select>
         <a-select
             v-model="selectedBranchId"
@@ -31,7 +28,7 @@
               value: branch.id.toString() ,
               }))"
             :filter-option="filterOption"
-            @change="handleBranchChange"
+            @change="onBranchSelected($event)"
         ></a-select>
         <a-select
             v-model="selectedBrandsIds"
@@ -44,8 +41,8 @@
               value: branch.id.toString() ,
               }))"
             :filter-option="filterOption"
-            @change="handleBrandsChange"
-            showArrow="true"
+            @change="onBrandSelected($event)"
+            showArrow
         ></a-select>
         <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
         <CustomButton
@@ -88,62 +85,101 @@ export default defineComponent({
       type: Function as PropType<() => void>,
       required: true
     },
-    errorMessage : String,
+    errorMessage: String,
     brands: Array,
     branches: Array
   },
-  setup(props){
-    const selectedRole = ref(null);
-    const selectedBranchId = ref('');
-    const selectedBrandsIds = ref([])
+  setup(props) {
+    const firstName = ref<string>('');
+    const lastName = ref<string>('');
+    const telephoneNumber = ref<string>('');
+    const selectedRole = ref<string>('');
+    const selectedBranchId = ref<number>();
+    const selectedBrandsIds = ref<Array<number>>([])
+    const isAllDataEntered = ref(false)
+
     watch(() => props.modalActive, () => {
-      selectedRole.value = null;
+      selectedRole.value = '';
     });
+    const filterOption = (input: string, option: any) => {
+      return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    };
+
+    const onRoleSelected = (value: string) => {
+      selectedRole.value = value
+      validate()
+    }
+
+    const onBranchSelected = (value: number) => {
+      selectedBranchId.value = value
+      validate()
+    }
+
+    const onBrandSelected = (value: number[]) => {
+      selectedBrandsIds.value = value
+      validate()
+    }
+
+    const validate = () => {
+      if (firstName.value.length > 0 && lastName.value.length > 0 && telephoneNumber.value.length == 16 &&
+          selectedRole.value.length > 0 && selectedBranchId.value && selectedBrandsIds.value.length > 0) {
+        isAllDataEntered.value = true
+      } else isAllDataEntered.value = false
+    }
     return {
+      firstName,
+      lastName,
+      telephoneNumber,
       selectedRole,
       selectedBranchId,
       selectedBrandsIds,
+      filterOption,
+      onRoleSelected,
+      onBranchSelected,
+      onBrandSelected,
+      validate,
+      isAllDataEntered
     }
 
   },
   directives: {maska: vMaska},
   data() {
     return {
-      firstName: '',
-      lastName: '',
-      telephoneNumber: '',
       maskedValue: "",
-      isAllDataEntered: false,
       bindedObject: {
         masked: "",
         unmasked: "",
         completed: false
       },
       roleOptions: [
-        {text: "Админ", value: "owner"},
-        {text: "Директор", value: "branch_director"},
-        {text: "Менеджер", value: "sales_manager"}
+        {title: "Админ", value: "owner"},
+        {title: "Директор", value: "branch_director"},
+        {title: "Менеджер", value: "sales_manager"}
       ]
     }
   },
   methods: {
     onCreateButtonClick() {
+      console.log("firstName=", this.firstName)
+      console.log("lastName=", this.lastName)
+      console.log("telephoneNumber=", this.telephoneNumber)
+      console.log("role=", this.selectedRole)
+      console.log("brand_ids=", this.selectedBrandsIds)
+      console.log("branch_id=", this.selectedBranchId)
       this.$emit('createUser', {
         firstName: this.firstName,
         lastName: this.lastName,
-        telephoneNumber: this.telephoneNumber
+        telephoneNumber: this.telephoneNumber,
+        role: this.selectedRole,
+        brand_ids: this.selectedBrandsIds,
+        branch_id: this.selectedBranchId
       })
-    },
-    checkForData() {
-      if(this.firstName.length>0 && this.lastName.length>0 && this.telephoneNumber.length>0){
-        this.isAllDataEntered = true
-      }else this.isAllDataEntered = false
     }
   }
 })
 </script>
 <style scoped>
-.inputFirstName, .inputLastName, .inputTelephone,.v-input__control, .v-field , .v-field--active, .v-field--appended{
+.inputFirstName, .inputLastName, .inputTelephone, .v-input__control, .v-field, .v-field--active, .v-field--appended {
   color: #4D4D4D;
   font-size: 16px;
   font-style: normal;
@@ -155,7 +191,8 @@ export default defineComponent({
   border: 1px solid #999;
   margin-bottom: 24px;
 }
-input::placeholder{
+
+input::placeholder {
   color: #4D4D4D;
 }
 </style>

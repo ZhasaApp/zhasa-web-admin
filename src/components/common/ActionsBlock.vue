@@ -77,7 +77,7 @@
       <v-select
           v-model="selectedBranches"
           :items="branches?.map((branch: any) => ({
-              text: branch.description.toString(),
+              text: branch.title.toString(),
               value: branch.id.toString() ,
               }))"
           item-title="text"
@@ -121,6 +121,7 @@ export default defineComponent({
       emit('updateRolesFilter', newValue);
     });
     watch(selectedBrands, (newValue) => {
+      console.log("branches",props.branches)
       emit('updateBrandsFilter', newValue);
 
     });
@@ -140,10 +141,13 @@ export default defineComponent({
       emit('editRoleClicked');
     };
     const handleEditBranch = () => {
+      emit('editBranchClicked');
     };
     const handleEditBrand = () => {
+      emit('editBrandClicked');
     };
     const handleDeleteUsers = () => {
+      emit('deleteUserClicked');
     };
 
     return {
@@ -190,7 +194,7 @@ export default defineComponent({
 }
 
 .actions_first_block .v-btn--variant-tonal  {
-  background-color: #E2E1E8 !important;
+  background-color: #fff !important;
   color: #4D4D4D !important;
 }
 
@@ -208,6 +212,7 @@ export default defineComponent({
   opacity: 1.0;
   font-weight: bold;
   font-size: 14px;
+  padding: 0;
 }
 
 .actions_inner_cards {
@@ -242,5 +247,19 @@ export default defineComponent({
 .v-input__details {
   display: none;
 }
+
+.outer_actions_block .v-input--density-default {
+  --v-input-control-height: 0px;
+  --v-input-padding-top: 0px;
+}
+
+.outer_actions_block .v-field--appended {
+  padding-inline-end: 8px;
+}
+
+.outer_actions_block .v-field__input {
+  padding: 8px;
+}
+
 
 </style>

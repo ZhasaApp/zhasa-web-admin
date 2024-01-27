@@ -3,12 +3,17 @@
     <div class="modal-content">
       <form @submit.prevent="onEditButtonClick">
         <v-select
-            :items="roleOptions"
-            v-model="selectedRole"
+            :items="brands?.map((branch: any) => ({
+              text: branch.title.toString(),
+              value: branch.id.toString() ,
+              }))"
+            v-model="selectedBrand"
             item-title="text"
             item-value="value"
-            placeholder="Выберите роль"
+            placeholder="Выберите бренд"
             variant="outlined"
+            color="#1CB5C2"
+            multiple
             style="width: 100%; margin-bottom: 24px;"
         >
         </v-select>
@@ -42,7 +47,7 @@ export default defineComponent({
   props: {
     modalTitle: {
       type: String,
-      default: 'Поменять роль',
+      default: 'Поменять бренд',
     },
     modalActive: {
       type: Boolean,
@@ -52,28 +57,25 @@ export default defineComponent({
       type: Function as PropType<() => void>,
       required: true
     },
-    errorMessage: String
+    errorMessage: String,
+    brands: Array
   },
   setup(props, {emit}) {
-    const selectedRole = ref(null);
+    const selectedBrand = ref(null);
 
     const onEditButtonClick = () => {
-      emit('editRoleFromDropDown', {
-        role: selectedRole.value
+      console.log("selectedBrand.value",selectedBrand.value)
+      emit('editBrandFromDropDown', {
+        brand: selectedBrand.value
       })
     }
     watch(() => props.modalActive, () => {
-      selectedRole.value = null;
+      selectedBrand.value = null;
     });
 
     return {
-      selectedRole,
-      onEditButtonClick,
-      roleOptions: [
-        {text: "Админ", value: "owner"},
-        {text: "Директор", value: "branch_director"},
-        {text: "Менеджер", value: "sales_manager"}
-      ],
+      selectedBrand,
+      onEditButtonClick
     }
   }
 })

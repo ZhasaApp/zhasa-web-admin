@@ -1,30 +1,20 @@
 <template>
   <CustomModal @close.prevent="toggleModal" :modalActive="modalActive" :modal-title="modalTitle">
     <div class="modal-content">
-      <form @submit.prevent="onEditButtonClick">
-        <v-select
-            :items="roleOptions"
-            v-model="selectedRole"
-            item-title="text"
-            item-value="value"
-            placeholder="Выберите роль"
-            variant="outlined"
-            style="width: 100%; margin-bottom: 24px;"
-        >
-        </v-select>
-        <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
+      <form @submit.prevent="onDeleteButtonClick">
         <div class="buttons_block">
+          <CustomButton
+              type="submit"
+              :additional-styles="{color: '#EDEDED', background: '#FF0000'}"
+          >
+            Удалить
+          </CustomButton>
           <CustomButton
               @click="toggleModal"
               type="button"
               :additional-styles="{color: '#333', border: '1px solid #999', opacity: '0.5', background: '#FFF'}"
           >
             Закрыть
-          </CustomButton>
-          <CustomButton
-              type="submit"
-          >
-            Сохранить
           </CustomButton>
         </div>
       </form>
@@ -40,10 +30,6 @@ import CustomModal from "../../common/CustomModal.vue";
 export default defineComponent({
   components: {CustomButton, CustomModal},
   props: {
-    modalTitle: {
-      type: String,
-      default: 'Поменять роль',
-    },
     modalActive: {
       type: Boolean,
       default: false
@@ -52,28 +38,24 @@ export default defineComponent({
       type: Function as PropType<() => void>,
       required: true
     },
-    errorMessage: String
+    errorMessage: String,
+    brands: Array,
+    deleteItems: Array
   },
   setup(props, {emit}) {
-    const selectedRole = ref(null);
 
-    const onEditButtonClick = () => {
-      emit('editRoleFromDropDown', {
-        role: selectedRole.value
-      })
+    const modalTitle = ref("")
+
+    watch(() => props.deleteItems, (newVal) => {
+      modalTitle.value = newVal.length === 1 ? "Вы действительно хотите удалить пользователя?" : "Вы действительно хотите удалить пользователей?"
+    })
+
+    const onDeleteButtonClick = () => {
+      emit('deleteFromDropDown', props.deleteItems)
     }
-    watch(() => props.modalActive, () => {
-      selectedRole.value = null;
-    });
-
     return {
-      selectedRole,
-      onEditButtonClick,
-      roleOptions: [
-        {text: "Админ", value: "owner"},
-        {text: "Директор", value: "branch_director"},
-        {text: "Менеджер", value: "sales_manager"}
-      ],
+      onDeleteButtonClick,
+      modalTitle
     }
   }
 })
