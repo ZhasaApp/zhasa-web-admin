@@ -105,6 +105,7 @@ import ChangeBrandModal from "../Modals/ChangeBrandModal.vue";
 import ChangeBranchModal from "../Modals/ChangeBranchModal.vue";
 import DeleteModal from "../Modals/DeleteModal.vue";
 import EditUserModal from "./EditUserModal.vue";
+import {BASE_URL} from "../../../utils/Constants.ts";
 
 export default defineComponent({
   name: 'AllUsersListPage',
@@ -118,12 +119,12 @@ export default defineComponent({
     const headers = {
       'Authorization': TOKEN,
     };
-    fetch('http://185.182.219.90/admin/branches', {headers})
+    fetch(`${BASE_URL}/branches`, {headers})
         .then(response => response.json())
         .then(data => this.branches = data?.result)
         .catch(error => console.log(error));
 
-    fetch('http://185.182.219.90/admin/brands', {headers})
+    fetch(`${BASE_URL}/brands`, {headers})
         .then(response => response.json())
         .then(data => this.brands = data?.result)
         .catch(error => console.log(error));
@@ -273,7 +274,7 @@ export default defineComponent({
           new_role: data.role,
         })
       };
-      fetch('http://185.182.219.90/admin/change-users-role', requestOptions)
+      fetch(`${BASE_URL}/change-users-role`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -347,7 +348,7 @@ export default defineComponent({
           new_role: role,
         })
       };
-      fetch('http://185.182.219.90/admin/change-users-role', requestOptions)
+      fetch(`${BASE_URL}/change-users-role`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -377,7 +378,7 @@ export default defineComponent({
         })
       };
       console.log("requestOptions", requestOptions)
-      fetch('http://185.182.219.90/admin/change-users-brands', requestOptions)
+      fetch(`${BASE_URL}/change-users-brands`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -412,7 +413,7 @@ export default defineComponent({
           new_branch_id: Number(data.branch),
         })
       };
-      fetch('http://185.182.219.90/admin/change-users-branch', requestOptions)
+      fetch(`${BASE_URL}/change-users-branch`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -447,7 +448,7 @@ export default defineComponent({
           user_ids: ids
         })
       };
-      fetch('http://185.182.219.90/admin/users', requestOptions)
+      fetch(`${BASE_URL}/users`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -486,7 +487,7 @@ export default defineComponent({
           branch_id: Number(dataBody.branch_id)
         })
       };
-      fetch('http://185.182.219.90/admin/user', requestOptions)
+      fetch(`${BASE_URL}/user`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -535,7 +536,7 @@ export default defineComponent({
           branch_id: Number(dataBody.branch_id)
         })
       };
-      fetch('http://185.182.219.90/admin/update-user', requestOptions)
+      fetch(`${BASE_URL}/update-user`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();

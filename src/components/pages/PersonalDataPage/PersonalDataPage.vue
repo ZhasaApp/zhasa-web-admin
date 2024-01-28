@@ -51,6 +51,7 @@
 import {defineComponent, ref} from 'vue';
 import CustomButton from "../../common/CustomButton.vue";
 import {TOKEN} from "../../constants.ts";
+import {BASE_URL} from "../../../utils/Constants.ts";
 
 export default defineComponent({
   name: 'PersonalDataPage',
@@ -66,7 +67,7 @@ export default defineComponent({
     const headers = {
       'Authorization': TOKEN
     };
-    fetch('http://185.182.219.90/admin/branches', {headers: headers, mode: 'no-cors'})
+    fetch(`${BASE_URL}/branches`, {headers: headers, mode: 'no-cors'})
         .then(response => response.json())
         .then(data => this.brands = data)
         .catch(error => console.log(error));

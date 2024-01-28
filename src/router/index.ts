@@ -6,10 +6,6 @@ const router = createRouter({
         {
             path: '/zhasa-web-admin',
             component: () => import("../components/pages/AllUsersList/AllUsersListPage.vue")
-        },
-        {
-            path: '/zhasa-web-admin/roles/personalData',
-            component: () => import("../components/pages/PersonalDataPage/PersonalDataPage.vue")
         }
     ]
 })

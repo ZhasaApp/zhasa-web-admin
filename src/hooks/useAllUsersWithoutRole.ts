@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {ref, onMounted} from 'vue';
 import {TOKEN} from "../components/constants.ts";
+import {BASE_URL} from "../utils/Constants.ts";
 
 function useAllUsersWithoutRole() {
     const users = ref<User[]>([]);
@@ -11,7 +12,7 @@ function useAllUsersWithoutRole() {
     const fetching = async (): Promise<void> => {
         try {
             const response = await axios.get<ResponseType>(
-                'http://185.182.219.90/admin/users/no-roles',
+                `${BASE_URL}/users/no-roles`,
                 {
                     headers
                 }

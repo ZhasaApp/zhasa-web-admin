@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {ref, onMounted, onBeforeUnmount} from 'vue';
 import {TOKEN} from "../components/constants.ts";
+import {BASE_URL} from "../utils/Constants.ts";
 
 function useAllUsersWithRoles() {
     const users = ref<any[]>([]);
@@ -37,7 +38,7 @@ function useAllUsersWithRoles() {
             const sortParams = (!sortState || sortState.sortState === 'none' ) ? '' : `&sort_field=${sortState.columnName == 'fullName' ? 'fio' : 'branch'}&sort_type=${sortState.sortState}`
             console.log("roleKeysParams=", roleKeysParams)
             console.log("sortParams=", sortParams)
-            const url = `http://185.182.219.90/admin/users?page=${page - 1}&size=${size.value}${roleKeysParams}${brandsParams}${branchesParams}${sortParams}&search=${searchValue}`
+            const url = `${BASE_URL}/users?page=${page - 1}&size=${size.value}${roleKeysParams}${brandsParams}${branchesParams}${sortParams}&search=${searchValue}`
             console.log("url=", url)
 
             const response = await axios.get<ResponseType>(url,{headers});
