@@ -94,6 +94,7 @@
 <script lang="ts">
 import {defineComponent, PropType, ref, watch} from 'vue';
 import SortIcon from "./SortIcon.vue";
+import {ROLE_OPTIONS} from "../../utils/Constants.ts";
 
 interface TableColumn {
   key: string;
@@ -142,11 +143,7 @@ export default defineComponent({
     const currentPage = ref(1);
     const currentSortState = ref<any>(null)
     const selectedIndex = ref<number>(-1);
-    const roleOptions = [
-      {text: "Админ", value: "owner"},
-      {text: "Директор", value: "branch_director"},
-      {text: "Менеджер", value: "sales_manager"}
-    ]
+    const roleOptions = ROLE_OPTIONS
     watch(() => props.searchValue, () => {
       currentPage.value = 1;
     });

@@ -105,7 +105,8 @@ import ChangeBrandModal from "../Modals/ChangeBrandModal.vue";
 import ChangeBranchModal from "../Modals/ChangeBranchModal.vue";
 import DeleteModal from "../Modals/DeleteModal.vue";
 import EditUserModal from "./EditUserModal.vue";
-import {BASE_URL} from "../../../utils/Constants.ts";
+import {BASE_URL} from "../../../utils/EnvConstants.ts";
+import {ROLE_OPTIONS} from "../../../utils/Constants.ts";
 
 export default defineComponent({
   name: 'AllUsersListPage',
@@ -620,11 +621,7 @@ export default defineComponent({
       branches,
       brands,
       handleSortSelected,
-      roleOptions: [
-        {text: "Админ", value: "owner"},
-        {text: "Директор", value: "branch_director"},
-        {text: "Менеджер", value: "sales_manager"}
-      ],
+      roleOptions: ROLE_OPTIONS,
       tableColumns: [
         {key: 'id', label: 'ID', width: '56px', withSort: false},
         {key: 'fullName', label: 'ФИО', width: '216px', withSort: true},

@@ -36,6 +36,7 @@
 import {defineComponent, PropType, ref, watch} from "vue";
 import CustomButton from "../../common/CustomButton.vue";
 import CustomModal from "../../common/CustomModal.vue";
+import {ROLE_OPTIONS} from "../../../utils/Constants.ts";
 
 export default defineComponent({
   components: {CustomButton, CustomModal},
@@ -69,11 +70,7 @@ export default defineComponent({
     return {
       selectedRole,
       onEditButtonClick,
-      roleOptions: [
-        {text: "Админ", value: "owner"},
-        {text: "Директор", value: "branch_director"},
-        {text: "Менеджер", value: "sales_manager"}
-      ],
+      roleOptions: ROLE_OPTIONS,
     }
   }
 })

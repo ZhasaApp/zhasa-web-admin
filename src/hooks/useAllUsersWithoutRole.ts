@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {ref, onMounted} from 'vue';
 import {TOKEN} from "../components/constants.ts";
-import {BASE_URL} from "../utils/Constants.ts";
+import {BASE_URL} from "../utils/EnvConstants.ts";
 
 function useAllUsersWithoutRole() {
     const users = ref<User[]>([]);

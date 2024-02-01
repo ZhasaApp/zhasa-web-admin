@@ -1,7 +1,7 @@
 <template>
   <CustomModal @close.prevent="toggleModal" :modalActive="modalActive" :modal-title="modalTitle">
     <div class="modal-content">
-      <form @submit.prevent="onCreateButtonClick">
+      <form @submit.prevent="onCreateButtonClick" :key="modalActive.toString()">
         <input placeholder="Имя" type="text" v-model="firstName" @input="validate" class="inputFirstName"/>
         <input placeholder="Фамилия" type="text" v-model="lastName" @input="validate" class="inputLastName"/>
         <input
@@ -16,7 +16,7 @@
             v-model="selectedRole"
             placeholder="Выберите роль"
             style="width: 100%;"
-            :options="roleOptions.map(role => ({ label: role.title, value: role.value }))"
+            :options="roleOptions.map(role => ({ label: role.text, value: role.value }))"
             @change="onRoleSelected($event)"
         ></a-select>
         <a-select
@@ -75,6 +75,7 @@ import {defineComponent, PropType, ref, watch} from "vue";
 import {vMaska} from "maska"
 import CustomButton from "../../common/CustomButton.vue";
 import CustomModal from "../../common/CustomModal.vue";
+import {ROLE_OPTIONS} from "../../../utils/Constants.ts";
 
 export default defineComponent({
   components: {CustomButton, CustomModal},
@@ -105,10 +106,13 @@ export default defineComponent({
     const isAllDataEntered = ref(false)
 
     watch(() => props.modalActive, () => {
+      firstName.value ='';
+      lastName.value ='';
+      telephoneNumber.value = '';
       selectedRole.value = '';
-    });
-    watch(selectedRole, () => {
-
+      selectedBranchId.value = undefined;
+      selectedBrandsIds.value = [];
+      isAllDataEntered.value = false;
     });
     const filterOption = (input: string, option: any) => {
       return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
@@ -160,11 +164,7 @@ export default defineComponent({
         unmasked: "",
         completed: false
       },
-      roleOptions: [
-        {title: "Админ", value: "owner"},
-        {title: "Директор", value: "branch_director"},
-        {title: "Менеджер", value: "sales_manager"}
-      ]
+      roleOptions: ROLE_OPTIONS
     }
   },
   methods: {
