@@ -98,7 +98,6 @@ import TableData from "../../common/TableData.vue";
 import HeaderBar from "../../common/HeaderBar.vue";
 import useAllUsersWithRoles from "../../../hooks/useAllUsersWithRoles.ts";
 import {ref, watch} from 'vue'
-import AddManagerRoleModal from "../AllRoles/AddManagerRoleModal.vue";
 import ChangeRole from "../Modals/ChangeRole.vue";
 import ActionsBlock from "../../common/ActionsBlock.vue";
 import ChangeBrandModal from "../Modals/ChangeBrandModal.vue";
@@ -114,7 +113,7 @@ export default defineComponent({
     EditUserModal,
     DeleteModal,
     ChangeBranchModal,
-    ChangeBrandModal, ActionsBlock, ChangeRole, AddManagerRoleModal, CreatUserModal, TableData, HeaderBar
+    ChangeBrandModal, ActionsBlock, ChangeRole, CreatUserModal, TableData, HeaderBar
   },
   mounted() {
     const headers = {
@@ -314,9 +313,7 @@ export default defineComponent({
 
     const onUserEdit = (user: any) => {
       const pureUser = pureUserList.value.find(item => item.id == user.id)
-      console.log(pureUser)
       selectedEditUser.value = pureUser
-      console.log("pureUser.brands=", pureUser.brands)
       const branchID = branches.value.find((it: any) => it.title == pureUser.branch_title)?.id
       const brandIds = []
       for (let i = 0; i < pureUser.brands.length; i++) {
@@ -327,8 +324,6 @@ export default defineComponent({
           }
         }
       }
-      console.log("brandIds=",brandIds)
-      console.log("branchID=",branchID)
       selectedEditUserDefaultOption.value = {
         role: user.role,
         brandIds: brandIds,
@@ -378,7 +373,6 @@ export default defineComponent({
           new_brands_ids: data.brand.map((id: string) => Number(id)),
         })
       };
-      console.log("requestOptions", requestOptions)
       fetch(`${BASE_URL}/change-users-brands`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
