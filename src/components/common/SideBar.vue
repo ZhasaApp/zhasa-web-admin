@@ -4,7 +4,7 @@
       <img src="../../assets/small-logo-zhasa.svg" alt="Logo">
     </div>
     <div class="menu">
-      <router-link class="menu-button" to="/branches">
+      <router-link class="menu-button" to="/branch">
         <img v-if="isActive('/branch')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
         <img src="../../assets/icon_branches.svg" class="users-tab-icon" alt="users icon">
         <span class="menu-item-text">Филиалы</span>
