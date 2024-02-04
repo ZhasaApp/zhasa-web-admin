@@ -5,7 +5,7 @@
     </div>
     <div class="menu">
       <router-link class="menu-button" to="/branches">
-        <img v-if="isActive('/branches')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="isActive('/branch')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
         <img src="../../assets/icon_branches.svg" class="users-tab-icon" alt="users icon">
         <span class="menu-item-text">Филиалы</span>
       </router-link>

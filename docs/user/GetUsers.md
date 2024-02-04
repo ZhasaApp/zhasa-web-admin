@@ -13,6 +13,8 @@
 - `role_keys: Array<string>` - user roles: `sales_manager, branch_director, owner`
 - `brand_ids: Array<integer>` - brand ids
 - `branch_ids: Array<integer>` - branch ids
+- `sort_field: string` - sort field name `fio, branch`
+- `sort_type: string` - sort type `asc, desc`
 - `search: string` - searching text
 
 

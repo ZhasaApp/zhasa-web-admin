@@ -4,7 +4,7 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
-            path: '/branches',
+            path: '/branch',
             component: () => import("../components/pages/BranchesPage/BranchesListPage.vue")
         },
         {
