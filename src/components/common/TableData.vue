@@ -206,8 +206,6 @@ export default defineComponent({
 .table-container {
   background: none;
   max-height: calc(100vh);
-  overflow-x: scroll;
-  overflow-y: scroll;
 }
 
 td .v-text-field input::placeholder, td .v-select__selection-text {
@@ -215,6 +213,14 @@ td .v-text-field input::placeholder, td .v-select__selection-text {
   opacity: 1.0;
   font-weight: 600;
   font-size: 10px;
+}
+
+td .v-text-field input {
+  padding: 0;
+}
+
+td .v-text-field {
+  padding: 0;
 }
 
 
@@ -260,6 +266,7 @@ td .v-field__append-inner {
   width: 100%;
   table-layout: auto;
   border-collapse: collapse;
+  overflow: hidden;
 
   th {
     color: #706B8C;
