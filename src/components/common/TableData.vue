@@ -346,6 +346,29 @@ thead {
   color: #1CB5C2 !important;
 }
 
+.ant-select-selector {
+  height: 48px !important;
+  border-radius: 12px !important;
+  border: 1px solid #999 !important;
+}
+
+.ant-select-selection-placeholder,
+.ant-select-selection-item,
+.ant-select-selection-search {
+  padding: 8px 0 !important;
+}
+
+.ant-select-selection-search-input {
+  margin: 0 !important;
+}
+
+.selector-with_multiple-select {
+  width: 100%;
+
+  .ant-select-selection-item {
+    padding: 0 !important;
+  }
+}
 
 </style>
 
