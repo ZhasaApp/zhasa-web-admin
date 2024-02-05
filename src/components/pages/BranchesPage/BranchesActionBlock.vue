@@ -9,7 +9,7 @@
               v-bind="props"
               :variant="(selectedBranches?.length ?? 0) > 0 ? 'tonal' : 'text'"
               :disabled="(selectedBranches?.length ?? 0) === 0"
-              style="width: 270px; text-align: left"
+              style="width: 140px; text-align: left"
           >
             {{(selectedBranches?.length ?? 0) > 0 ? 'Выбрано ' + (selectedBranches?.length ?? 0) + '  ' : 'Выбрать все' }}
             <v-icon v-if="(selectedBranches?.length ?? 0) > 0">mdi-chevron-down</v-icon>
@@ -21,28 +21,6 @@
           </v-list-item>
         </v-list>
       </v-menu>
-    </div>
-    <div class="actions_inner_cards">
-      <v-select
-          v-model="selectedRoles"
-          :items="roleOptions"
-          item-title="text"
-          item-value="value"
-          multiple
-          chip
-          small-chips
-          style="width: 144px"
-          placeholder="Название"
-          variant="outlined"
-          color="#1CB5C2"
-          bg-color="#00000000"
-          placeholder-color="red"
-          class="demo"
-      >
-        <template v-slot:selection="{ index }">
-          <span v-if="index === 0" class="innerSpan">Роли</span>
-        </template>
-      </v-select>
     </div>
   </div>
 </template>
