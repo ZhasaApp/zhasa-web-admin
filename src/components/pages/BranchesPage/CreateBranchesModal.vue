@@ -9,6 +9,7 @@
             mode="multiple"
             show-search
             placeholder="Выберите бренд"
+            style="width: 100%"
             class="selector-with_multiple-select"
             :options="brands?.map((branch: any) => ({
               label: branch.title.toString(),
