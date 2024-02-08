@@ -78,7 +78,7 @@
     </table>
     <div class="bottom-bar">
       <div class="table-footer">
-        <span>Всего пользователей: <b>{{totalCount}}</b></span>
+        <span>Всего: <b>{{totalCount ?? "Не указана"}}</b></span>
         <a-pagination
             v-model:current="currentPage"
             :total="totalCount"

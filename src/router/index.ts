@@ -13,7 +13,7 @@ const router = createRouter({
         },
         {
             path: '/brands',
-            component: () => import("../components/pages/AllUsersList/AllUsersListPage.vue")
+            component: () => import("../components/pages/BrandsPage/BrandsListPage.vue")
         },
         {
             path: '/sales-types',
