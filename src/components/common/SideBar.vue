@@ -4,32 +4,32 @@
       <img src="../../assets/small-logo-zhasa.svg" alt="Logo">
     </div>
     <div class="menu">
-      <router-link class="menu-button" to="/branch">
-        <img v-if="isActive('/branch')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
-        <img v-if="!isActive('/branch')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
-        <img v-if="isActive('/branch')" src="../../assets/icon_branches_active.svg" class="users-tab-icon" alt="users icon">
-        <img v-if="!isActive('/branch')" src="../../assets/icon_branches.svg" class="users-tab-icon" alt="users icon">
+      <router-link class="menu-button" to="/zhasa-web-admin/branch">
+        <img v-if="isActive('branch')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="!isActive('branch')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
+        <img v-if="isActive('branch')" src="../../assets/icon_branches_active.svg" class="users-tab-icon" alt="users icon">
+        <img v-if="!isActive('branch')" src="../../assets/icon_branches.svg" class="users-tab-icon" alt="users icon">
         <span class="menu-item-text">Филиалы</span>
       </router-link>
-      <router-link class="menu-button" to="/zhasa-web-admin">
-        <img v-if="isActive('/zhasa-web-admin')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
-        <img v-if="!isActive('/zhasa-web-admin')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
-        <img v-if="isActive('/zhasa-web-admin')" src="../../assets/icon_users_active.svg" class="users-tab-icon" alt="users icon">
-        <img v-if="!isActive('/zhasa-web-admin')" src="../../assets/icon_users.svg" class="users-tab-icon" alt="users icon">
+      <router-link class="menu-button" to="/zhasa-web-admin/users">
+        <img v-if="isActive('users')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="!isActive('users')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
+        <img v-if="isActive('users')" src="../../assets/icon_users_active.svg" class="users-tab-icon" alt="users icon">
+        <img v-if="!isActive('users')" src="../../assets/icon_users.svg" class="users-tab-icon" alt="users icon">
         <span class="menu-item-text">Пользователи</span>
       </router-link>
-      <router-link class="menu-button" to="/brands">
-        <img v-if="isActive('/brands')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
-        <img v-if="!isActive('/brands')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
-        <img v-if="isActive('/brands')" src="../../assets/icon_brands_active.svg" class ="users-tab-icon" alt="users icon">
-        <img v-if="!isActive('/brands')" src="../../assets/icon_brands.svg" class ="users-tab-icon" alt="users icon">
+      <router-link class="menu-button" to="/zhasa-web-admin/brands">
+        <img v-if="isActive('brands')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="!isActive('brands')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
+        <img v-if="isActive('brands')" src="../../assets/icon_brands_active.svg" class ="users-tab-icon" alt="users icon">
+        <img v-if="!isActive('brands')" src="../../assets/icon_brands.svg" class ="users-tab-icon" alt="users icon">
         <span class="menu-item-text">Бренды</span>
       </router-link>
-      <router-link class="menu-button" to="/sales-types">
-        <img v-if="isActive('/sales-types')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
-        <img v-if="!isActive('/sales-types')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
-        <img v-if="isActive('/sales-types')" src="../../assets/icon_sales_active.svg" class ="users-tab-icon" alt="users icon">
-        <img v-if="!isActive('/sales-types')" src="../../assets/icon_sales.svg" class ="users-tab-icon" alt="users icon">
+      <router-link class="menu-button" to="/zhasa-web-admin/sales-types">
+        <img v-if="isActive('sales-types')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="!isActive('sales-types')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
+        <img v-if="isActive('sales-types')" src="../../assets/icon_sales_active.svg" class ="users-tab-icon" alt="users icon">
+        <img v-if="!isActive('sales-types')" src="../../assets/icon_sales.svg" class ="users-tab-icon" alt="users icon">
         <span class="menu-item-text">Типы продаж</span>
       </router-link>
     </div>
@@ -46,7 +46,7 @@ export default defineComponent({
 
     const isActive = (path: string) => {
       // Check if the route's path matches the given path
-      return route.path === path;
+      return route.path.includes(path);
     };
 
     return { isActive };
