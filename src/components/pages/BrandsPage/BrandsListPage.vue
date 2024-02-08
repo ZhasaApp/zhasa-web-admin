@@ -64,15 +64,6 @@ export default defineComponent({
     TableData,
     BrandsHeaderBar
   },
-  mounted() {
-    const headers = {
-      'Authorization': TOKEN,
-    };
-    fetch(`${BASE_URL}/brands`, {headers})
-        .then(response => response.json())
-        .then(data => this.brands = data?.result)
-        .catch(error => console.log(error));
-  },
   setup() {
     const modalActive = ref(false)
     const deleteModalActive = ref(false)

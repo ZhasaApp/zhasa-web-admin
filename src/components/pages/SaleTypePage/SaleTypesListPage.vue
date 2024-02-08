@@ -66,15 +66,6 @@ export default defineComponent({
     CreateSaleTypeModal,
     EditSaleTypeModal
   },
-  mounted() {
-    const headers = {
-      'Authorization': TOKEN,
-    };
-    fetch(`${BASE_URL}/sale-types`, {headers})
-        .then(response => response.json())
-        .then(data => this.saleTypes = data?.result)
-        .catch(error => console.log(error));
-  },
   setup() {
     const modalActive = ref(false)
     const deleteModalActive = ref(false)
