@@ -1,76 +1,78 @@
 <template>
   <div class="content-body">
-    <BrandsHeaderBar
-        @modalToggler="createBrandModalToggler"
+    <SaleTypesHeaderBar
+        @modalToggler="createSaleTypeModalToggler"
         :handleSearch="handleSearch"
         :allSelected="allSelected"
-        :selectedBrands="selectedBrandIds"
-        @deleteBrandClicked="deleteBrandClicked"
+        :selectedSaleTypes="selectedSaleTypeIds"
+        @deleteSaleTypeClicked="deleteSaleTypeClicked"
         @toggleAll="toggleAll"
     />
     <TableData
         v-if="!isLoading"
-        :tableData="brandsTableData"
+        :tableData="saleTypesTableData"
         :columns="tableColumns"
         @sortSelected="handleSortSelected"
         @handlePageChange="fetching"
         :totalCount="totalCount"
         :size="size"
         :searchValue="searchValue"
-        :selectedUsers="selectedBrandIds"
+        :selectedUsers="selectedSaleTypeIds"
         @toggleSelection="toggleSelection"
-        @onUserDelete="onBrandDelete"
-        @onUserEdit="onBrandEdit"
+        @onUserDelete="onSaleTypeDelete"
+        @onUserEdit="onSaleTypeEdit"
     />
     <span v-else>Загрузка ...</span>
   </div>
-  <CreateBrandModal
-      :toggleModal="createBrandModalToggler"
+  <CreateSaleTypeModal
+      :toggleModal="createSaleTypeModalToggler"
       :modalActive="modalActive"
-      @createBrand="onCreateBrand"
+      @createSaleType="onCreateSaleType"
       :errorMessage="errorMessage"
   />
-  <EditBrandModal
+  <EditSaleTypeModal
       :editModalActive="editModalActive"
       :editToggleModal="editToggleModal"
-      @editBrand="onEditBrand"
+      @editSaleType="onEditSaleType"
       :errorMessage="errorMessage"
-      :curBrand="selectedEditBrand"
+      :curSaleType="selectedEditSaleType"
   />
   <DeleteModal
       :deleteItems="deleteItems"
       :modalActive="deleteModalActive"
       :toggleModal="closeDeleteModal"
       @deleteFromDropDown="deleteAction"
-      type="brand"
+      type="saleType"
   />
 </template>
 
 <script lang="ts">
 import {computed, defineComponent, ref, watch} from "vue";
-import BrandsHeaderBar from "./BrandsHeaderBar.vue";
+import SaleTypesHeaderBar from "./SaleTypesHeaderBar.vue";
 import TableData from "../../common/TableData.vue";
-import useAllBrands, {Brand} from "../../../hooks/useAllBrands.ts";
-import CreateBrandModal from "./CreateBrandModal.vue";
+import useAllSaleTypes, {SaleType} from "../../../hooks/useAllSaleTypes.ts";
+import CreateSaleTypeModal from "./CreateSaleTypeModal.vue";
 import {TOKEN} from "../../constants.ts";
 import {BASE_URL} from "../../../utils/EnvConstants.ts";
 import DeleteModal from "../Modals/DeleteModal.vue";
+import EditSaleTypeModal from "./EditSaleTypeModal.vue";
 
 export default defineComponent({
-  name: 'BrandsListPage',
+  name: 'SaleTypeListPage',
   components: {
-    DeleteModal,
-    CreateBrandModal,
     TableData,
-    BrandsHeaderBar
+    DeleteModal,
+    SaleTypesHeaderBar,
+    CreateSaleTypeModal,
+    EditSaleTypeModal
   },
   mounted() {
     const headers = {
       'Authorization': TOKEN,
     };
-    fetch(`${BASE_URL}/brands`, {headers})
+    fetch(`${BASE_URL}/sale-types`, {headers})
         .then(response => response.json())
-        .then(data => this.brands = data?.result)
+        .then(data => this.saleTypes = data?.result)
         .catch(error => console.log(error));
   },
   setup() {
@@ -81,39 +83,39 @@ export default defineComponent({
     const searchValue = ref('');
     const sortState = ref<any>(null);
     const allSelected = ref(false);
-    const selectedBrandIds = ref<Array<number>>([]);
+    const selectedSaleTypeIds = ref<Array<number>>([]);
     const deleteItems = ref<Array<number>>([]);
-    const {brands, isLoading, fetching, totalCount, size} = useAllBrands();
+    const {saleTypes, isLoading, fetching, totalCount, size} = useAllSaleTypes();
 
     const editModalActive = ref(false)
-    const selectedEditBrand = ref<any>(null)
+    const selectedEditSaleType = ref<any>(null)
 
-    const brandsTableData = computed(() => {
-      if (!brands.value || isLoading.value) {
+    const saleTypesTableData = computed(() => {
+      if (!saleTypes.value || isLoading.value) {
         return [];
       }
-      return brands.value.map((brand: Brand) => {
+      return saleTypes.value.map((saleType: SaleType) => {
         return {
-          id: brand.id,
-          title: brand.title,
+          id: saleType.id,
+          title: saleType.title,
         };
       });
     });
     const initPage = () => {
       fetching(1, searchValue.value, sortState.value)
-      selectedBrandIds.value = [];
+      selectedSaleTypeIds.value = [];
     };
     const handleSearch = (value: any) => {
       searchValue.value = value;
     };
     watch(searchValue, (searchValue) => {
       fetching(1, searchValue, sortState.value)
-      selectedBrandIds.value = [];
+      selectedSaleTypeIds.value = [];
     });
-    const createBrandModalToggler = () => {
+    const createSaleTypeModalToggler = () => {
       modalActive.value = !modalActive.value;
     }
-    const onCreateBrand = (dataBody: any) => {
+    const onCreateSaleType = (dataBody: any) => {
       const requestOptions = {
         method: 'POST',
         headers: {
@@ -124,8 +126,8 @@ export default defineComponent({
           title: dataBody.title
         })
       };
-      console.log("CREATE BRAND",dataBody,requestOptions )
-      fetch(`${BASE_URL}/brand`, requestOptions)
+      console.log("CREATE SALE TYPE",dataBody,requestOptions )
+      fetch(`${BASE_URL}/sale-type`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -140,11 +142,11 @@ export default defineComponent({
               }, 200);
               return Promise.reject(error);
             }
-            createBrandModalToggler()
+            createSaleTypeModalToggler()
             initPage()
 
             setTimeout(() => {
-              showAlert.value = "Новый бренд успешно создан";
+              showAlert.value = "Новый Тип Продаж успешно создан";
               setTimeout(() => {
                 showAlert.value = "";
               }, 2000);
@@ -169,11 +171,11 @@ export default defineComponent({
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          brand_ids: ids
+          sale_type_ids: ids
         })
       };
       console.log("requestOptions", requestOptions)
-      fetch(`${BASE_URL}/brand`, requestOptions)
+      fetch(`${BASE_URL}/sale-type`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -202,21 +204,21 @@ export default defineComponent({
           });
     }
 
-    const deleteBrandClicked = () => {
-      deleteItems.value = [...selectedBrandIds.value]
+    const deleteSaleTypeClicked = () => {
+      deleteItems.value = [...selectedSaleTypeIds.value]
       deleteModalActive.value = true
       console.log("DELETE2", deleteItems)
     };
 
-    const onBrandDelete = (brand: any) => {
-      console.log("onBrandDelete", brand)
-      deleteItems.value = [brand.id]
+    const onSaleTypeDelete = (saleType: any) => {
+      console.log("onDelete", saleType)
+      deleteItems.value = [saleType.id]
       deleteModalActive.value = true
     }
 
-    const onBrandEdit = (brand: any) => {
-      console.log("onBrandEdit", brand)
-      selectedEditBrand.value = brand
+    const onSaleTypeEdit = (saleType: any) => {
+      console.log("onEdit", saleType)
+      selectedEditSaleType.value = saleType
       editToggleModal()
     }
 
@@ -226,9 +228,9 @@ export default defineComponent({
 
     function toggleAll() {
       if (allSelected.value) {
-        selectedBrandIds.value = [];
+        selectedSaleTypeIds.value = [];
       } else {
-        selectedBrandIds.value = brandsTableData.value.map((brand) => (brand.id))
+        selectedSaleTypeIds.value = saleTypesTableData.value.map((saleType) => (saleType.id))
       }
     }
 
@@ -237,16 +239,16 @@ export default defineComponent({
       fetching(1, searchValue.value, sortState.value)
     }
     const toggleSelection = (rowIndex: number) => {
-      let brandId = brandsTableData.value[rowIndex].id
-      if (selectedBrandIds.value.includes(brandId)) {
-        selectedBrandIds.value = selectedBrandIds.value.filter(i => i !== brandId);
+      let saleTypeId = saleTypesTableData.value[rowIndex].id
+      if (selectedSaleTypeIds.value.includes(saleTypeId)) {
+        selectedSaleTypeIds.value = selectedSaleTypeIds.value.filter(i => i !== saleTypeId);
       } else {
-        selectedBrandIds.value = [...selectedBrandIds.value, brandId]
+        selectedSaleTypeIds.value = [...selectedSaleTypeIds.value, saleTypeId]
       }
     }
 
-    watch(selectedBrandIds, (newVal) => {
-      if (newVal.length === brandsTableData.value.length && brandsTableData.value.length != 0) {
+    watch(selectedSaleTypeIds, (newVal) => {
+      if (newVal.length === saleTypesTableData.value.length && saleTypesTableData.value.length != 0) {
         allSelected.value = true;
       } else {
         allSelected.value = false;
@@ -257,7 +259,7 @@ export default defineComponent({
       editModalActive.value = !editModalActive.value;
     }
 
-    const onEditBrand = (dataBody: any) => {
+    const onEditSaleType = (dataBody: any) => {
       const requestOptions = {
         method: 'PUT',
         headers: {
@@ -265,11 +267,11 @@ export default defineComponent({
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          brand_id: dataBody.id,
+          sale_type_id: dataBody.id,
           title: dataBody.title
         })
       };
-      fetch(`${BASE_URL}/brand`, requestOptions)
+      fetch(`${BASE_URL}/sale-type`, requestOptions)
           .then(async response => {
             const isJson = response.headers.get('content-type')?.includes('application/json');
             const data = isJson && await response.json();
@@ -289,7 +291,7 @@ export default defineComponent({
             initPage()
 
             setTimeout(() => {
-              showAlert.value = "Бренд успешно отредактирован!";
+              showAlert.value = "Тип продаж успешно отредактирован!";
               setTimeout(() => {
                 showAlert.value = "";
               }, 2000);
@@ -302,7 +304,7 @@ export default defineComponent({
     }
 
     return {
-      brandsTableData,
+      saleTypesTableData,
       isLoading,
       fetching,
       totalCount,
@@ -311,30 +313,30 @@ export default defineComponent({
         {key: 'id', label: 'ID', width: '56px', withSort: false},
         {key: 'title', label: 'Название', width: '684px', withSort: true}
       ],
-      createBrandModalToggler,
+      createSaleTypeModalToggler,
       modalActive,
       searchValue,
-      onCreateBrand,
-      brands,
+      onCreateSaleType,
+      saleTypes,
       errorMessage,
       handleSearch,
       allSelected,
-      selectedBrandIds,
-      deleteBrandClicked,
+      selectedSaleTypeIds,
+      deleteSaleTypeClicked,
       deleteModalActive,
-      onBrandDelete,
+      onSaleTypeDelete,
       closeDeleteModal,
       toggleAll,
       handleSortSelected,
       toggleSelection,
-      onBrandEdit,
+      onSaleTypeEdit,
       deleteItems,
       deleteAction,
       showAlert,
       editModalActive,
       editToggleModal,
-      onEditBrand,
-      selectedEditBrand
+      onEditSaleType,
+      selectedEditSaleType
     }
   }
 });

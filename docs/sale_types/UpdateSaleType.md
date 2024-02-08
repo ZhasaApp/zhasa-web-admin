@@ -2,7 +2,7 @@
 
 ## API
 
-- `PUT {base_url}/admin/sale-types`
+- `PUT {base_url}/admin/sale-type`
 
 ## Request
 

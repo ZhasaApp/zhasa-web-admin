@@ -2,7 +2,7 @@
 
 ## API
 
-- `GET {base_url}/admin/sale-types`
+- `GET {base_url}/admin/sale-type`
 
 ## Request
 

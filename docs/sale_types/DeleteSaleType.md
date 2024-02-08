@@ -2,7 +2,7 @@
 
 ## API
 
-- `DELETE {base_url}/admin/sale-types`
+- `DELETE {base_url}/admin/sale-type`
 
 ## Request
 

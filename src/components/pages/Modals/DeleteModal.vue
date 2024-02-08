@@ -57,6 +57,10 @@ export default defineComponent({
         one = "выбранный бренд"
         many = "выбранные бренды"
       }
+      if (props.type == "saleType") {
+        one = "выбранный тип продажи"
+        many = "выбранные типы продаж"
+      }
       modalTitle.value = newVal.length === 1 ? "Вы действительно хотите удалить " + one + "?" : "Вы действительно хотите удалить " + many + "?"
     })
 

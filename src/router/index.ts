@@ -17,7 +17,7 @@ const router = createRouter({
         },
         {
             path: '/sales-types',
-            component: () => import("../components/pages/AllUsersList/AllUsersListPage.vue")
+            component: () => import("../components/pages/SaleTypePage/SaleTypesListPage.vue")
         }
     ]
 })
