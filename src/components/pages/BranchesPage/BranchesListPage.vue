@@ -107,7 +107,8 @@ export default defineComponent({
         return {
           id: branch.id,
           title: branch.title,
-          description: branch.description
+          description: branch.description,
+          brand: `${branch.brands?.join(', ') ?? "-"}`,
         };
       });
     });
@@ -333,6 +334,7 @@ export default defineComponent({
         {key: 'id', label: 'ID', width: '56px', withSort: false},
         {key: 'title', label: 'Название', width: '216px', withSort: true},
         {key: 'description', label: 'Описание', width: '168px', withSort: false},
+        {key: 'brand', label: 'Бренд', width: '140px', withSort: false},
       ],
       createBranchModalToggler,
       modalActive,

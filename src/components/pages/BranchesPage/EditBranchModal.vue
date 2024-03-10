@@ -21,6 +21,22 @@
               showArrow
           ></a-select>
         </template>
+        <template v-else>
+          <a-select
+              v-model="selectedBrandsIds"
+              mode="multiple"
+              show-search
+              placeholder="Выберите бренд"
+              class="selector-with_multiple-select"
+              :options="brands?.map((branch: any) => ({
+              label: branch.title.toString(),
+              value: branch.id,
+              }))"
+              :filter-option="filterOption"
+              @change="onBrandSelected($event)"
+              showArrow
+          ></a-select>
+        </template>
         <a-alert type="error" style="margin-top: 16px" :message="errorMessage" show-icon
                  v-if="(errorMessage?.length ??0)>0"/>
         <div class="button-box">
@@ -103,7 +119,6 @@ export default defineComponent({
     }
 
     const validate = () => {
-      console.log("selectedBrandsIds",selectedBrandsIds.value)
       if (title.value.length > 0 && description.value.length > 0) {
         isAllDataEntered.value = true
       } else isAllDataEntered.value = false
@@ -133,9 +148,6 @@ export default defineComponent({
   },
   methods: {
     onSaveButtonClick(id: number) {
-      console.log("title=", this.title)
-      console.log("description=", this.description)
-      console.log("brand_ids=", this.selectedBrandsIds)
       this.$emit('editBranch', {
         title: this.title,
         description: this.description,

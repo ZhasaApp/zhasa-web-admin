@@ -55,10 +55,12 @@ import CreateBrandModal from "./CreateBrandModal.vue";
 import {TOKEN} from "../../constants.ts";
 import {BASE_URL} from "../../../utils/EnvConstants.ts";
 import DeleteModal from "../Modals/DeleteModal.vue";
+import EditBrandModal from "./EditBrandModal.vue";
 
 export default defineComponent({
   name: 'BrandsListPage',
   components: {
+    EditBrandModal,
     DeleteModal,
     CreateBrandModal,
     TableData,
