@@ -18,5 +18,5 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
-          script: cd /home/admsrv/admin && ./restart.sh
-  
+          port: ${{ secrets.PORT }}
+          script: cd /home/admsrv/admin && git pull
