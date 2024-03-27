@@ -18,7 +18,7 @@
               :defaultValue="defaultOption.role"
               placeholder="Выберите роль"
               style="width: 100%;"
-              :options="roleOptions.map(role => ({ label: role.title, value: role.value }))"
+              :options="roleOptions.map(role => ({ label: role.text, value: role.value }))"
               @change="onRoleSelected($event)"
           ></a-select>
         </template>
@@ -80,6 +80,7 @@ import {defineComponent, PropType, ref, watch} from "vue";
 import {vMaska} from "maska"
 import CustomButton from "../../common/CustomButton.vue";
 import CustomModal from "../../common/CustomModal.vue";
+import {ROLE_OPTIONS} from "../../../utils/Constants.ts";
 
 export default defineComponent({
   components: {CustomButton, CustomModal},
@@ -113,11 +114,7 @@ export default defineComponent({
     const selectedBranchId = ref<any>(null);
     const selectedBrandsIds = ref<Array<number>>([])
     const isAllDataEntered = ref(false)
-    const roleOptions = [
-      {title: "Админ", value: "owner"},
-      {title: "Директор", value: "branch_director"},
-      {title: "Менеджер", value: "sales_manager"}
-    ]
+    const roleOptions = ROLE_OPTIONS
 
     const brands = ref<Array<any>>(props?.brands ?? [])
     const branches = ref<Array<any>>(props?.branches ?? [])

@@ -1,7 +1,10 @@
+export interface RoleOption {
+    text: string;
+    value: string;
+}
 
-export const IS_DEBUG: boolean = false
-
-const DEV_URL: string = 'http://185.182.219.90/admin'
-const PROD_URL: string = 'https://doschamp.doscar.kz/admin'
-
-export const BASE_URL: string = IS_DEBUG ? DEV_URL : PROD_URL
+export const ROLE_OPTIONS: RoleOption[] = [
+    { text: "Owner", value: "owner" },
+    { text: "РОП", value: "branch_director" },
+    { text: "Менеджер", value: "sales_manager" }
+];

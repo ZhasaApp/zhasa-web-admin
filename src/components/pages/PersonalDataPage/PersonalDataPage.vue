@@ -51,7 +51,7 @@
 import {defineComponent, ref} from 'vue';
 import CustomButton from "../../common/CustomButton.vue";
 import {TOKEN} from "../../constants.ts";
-import {BASE_URL} from "../../../utils/Constants.ts";
+import {BASE_URL} from "../../../utils/EnvConstants.ts";
 
 export default defineComponent({
   name: 'PersonalDataPage',

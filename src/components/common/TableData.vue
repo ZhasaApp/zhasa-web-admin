@@ -78,7 +78,7 @@
     </table>
     <div class="bottom-bar">
       <div class="table-footer">
-        <span>Всего пользователей: <b>{{totalCount}}</b></span>
+        <span>Всего: <b>{{totalCount ?? "Не указана"}}</b></span>
         <a-pagination
             v-model:current="currentPage"
             :total="totalCount"
@@ -94,6 +94,7 @@
 <script lang="ts">
 import {defineComponent, PropType, ref, watch} from 'vue';
 import SortIcon from "./SortIcon.vue";
+import {ROLE_OPTIONS} from "../../utils/Constants.ts";
 
 interface TableColumn {
   key: string;
@@ -142,11 +143,7 @@ export default defineComponent({
     const currentPage = ref(1);
     const currentSortState = ref<any>(null)
     const selectedIndex = ref<number>(-1);
-    const roleOptions = [
-      {text: "Админ", value: "owner"},
-      {text: "Директор", value: "branch_director"},
-      {text: "Менеджер", value: "sales_manager"}
-    ]
+    const roleOptions = ROLE_OPTIONS
     watch(() => props.searchValue, () => {
       currentPage.value = 1;
     });
@@ -209,8 +206,6 @@ export default defineComponent({
 .table-container {
   background: none;
   max-height: calc(100vh);
-  overflow-x: scroll;
-  overflow-y: scroll;
 }
 
 td .v-text-field input::placeholder, td .v-select__selection-text {
@@ -218,6 +213,14 @@ td .v-text-field input::placeholder, td .v-select__selection-text {
   opacity: 1.0;
   font-weight: 600;
   font-size: 10px;
+}
+
+td .v-text-field input {
+  padding: 0;
+}
+
+td .v-text-field {
+  padding: 0;
 }
 
 
@@ -263,6 +266,7 @@ td .v-field__append-inner {
   width: 100%;
   table-layout: auto;
   border-collapse: collapse;
+  overflow: hidden;
 
   th {
     color: #706B8C;
@@ -342,6 +346,29 @@ thead {
   color: #1CB5C2 !important;
 }
 
+.ant-select-selector {
+  height: 48px !important;
+  border-radius: 12px !important;
+  border: 1px solid #999 !important;
+}
+
+.ant-select-selection-placeholder,
+.ant-select-selection-item,
+.ant-select-selection-search {
+  padding: 8px 0 !important;
+}
+
+.ant-select-selection-search-input {
+  margin: 0 !important;
+}
+
+.selector-with_multiple-select {
+  width: 100%;
+
+  .ant-select-selection-item {
+    padding: 0 !important;
+  }
+}
 
 </style>
 

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {ref, onMounted, onBeforeUnmount} from 'vue';
 import {TOKEN} from "../components/constants.ts";
-import {BASE_URL} from "../utils/Constants.ts";
+import {BASE_URL} from "../utils/EnvConstants.ts";
 
 function useAllUsersWithRoles() {
     const users = ref<any[]>([]);
@@ -12,7 +12,7 @@ function useAllUsersWithRoles() {
 
     const calculateSize = () => {
         const viewportHeight = window.innerHeight;
-        size.value = Math.floor((viewportHeight-300) / rowHeight);
+        size.value = Math.floor((viewportHeight-310) / rowHeight);
     };
 
     // Add window resize event listener

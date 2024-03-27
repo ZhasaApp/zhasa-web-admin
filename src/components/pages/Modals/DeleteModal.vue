@@ -39,15 +39,29 @@ export default defineComponent({
       required: true
     },
     errorMessage: String,
-    brands: Array,
-    deleteItems: Array
+    deleteItems: Array,
+    type: String
   },
   setup(props, {emit}) {
 
     const modalTitle = ref("")
 
     watch(() => props.deleteItems, (newVal: any) => {
-      modalTitle.value = newVal.length === 1 ? "Вы действительно хотите удалить пользователя?" : "Вы действительно хотите удалить пользователей?"
+      let one = "выбранного пользователя"
+      let many = "выбранных пользователей"
+      if (props.type == "branch") {
+        one = "выбранный филиал"
+        many = "выбранные филиалы"
+      }
+      if (props.type == "brand") {
+        one = "выбранный бренд"
+        many = "выбранные бренды"
+      }
+      if (props.type == "saleType") {
+        one = "выбранный тип продажи"
+        many = "выбранные типы продаж"
+      }
+      modalTitle.value = newVal.length === 1 ? "Вы действительно хотите удалить " + one + "?" : "Вы действительно хотите удалить " + many + "?"
     })
 
     const onDeleteButtonClick = () => {

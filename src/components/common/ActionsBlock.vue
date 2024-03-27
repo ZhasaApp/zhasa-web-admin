@@ -102,6 +102,7 @@
 
 <script lang="ts">
 import {defineComponent, ref, watch} from 'vue';
+import {ROLE_OPTIONS} from "../../utils/Constants.ts";
 
 export default defineComponent({
   name: 'ActionsBlock',
@@ -160,11 +161,7 @@ export default defineComponent({
       handleEditBranch,
       handleEditBrand,
       handleDeleteUsers,
-      roleOptions: [
-        {text: "Админ", value: "owner"},
-        {text: "Директор", value: "branch_director"},
-        {text: "Менеджер", value: "sales_manager"}
-      ]
+      roleOptions: ROLE_OPTIONS
     };
   },
 });

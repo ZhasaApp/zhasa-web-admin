@@ -4,31 +4,52 @@
       <img src="../../assets/small-logo-zhasa.svg" alt="Logo">
     </div>
     <div class="menu">
-      <router-link class="menu-button" to="/zhasa-web-admin">
-        <img src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
-        <img  src="../../assets/icon-users.svg" class ="users-tab-icon"  alt="users icon">
+      <router-link class="menu-button" to="/zhasa-web-admin/branch">
+        <img v-if="isActive('branch')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="!isActive('branch')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
+        <img v-if="isActive('branch')" src="../../assets/icon_branches_active.svg" class="users-tab-icon" alt="users icon">
+        <img v-if="!isActive('branch')" src="../../assets/icon_branches.svg" class="users-tab-icon" alt="users icon">
+        <span class="menu-item-text">Филиалы</span>
+      </router-link>
+      <router-link class="menu-button" to="/zhasa-web-admin/users">
+        <img v-if="isActive('users')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="!isActive('users')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
+        <img v-if="isActive('users')" src="../../assets/icon_users_active.svg" class="users-tab-icon" alt="users icon">
+        <img v-if="!isActive('users')" src="../../assets/icon_users.svg" class="users-tab-icon" alt="users icon">
         <span class="menu-item-text">Пользователи</span>
+      </router-link>
+      <router-link class="menu-button" to="/zhasa-web-admin/brands">
+        <img v-if="isActive('brands')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="!isActive('brands')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
+        <img v-if="isActive('brands')" src="../../assets/icon_brands_active.svg" class ="users-tab-icon" alt="users icon">
+        <img v-if="!isActive('brands')" src="../../assets/icon_brands.svg" class ="users-tab-icon" alt="users icon">
+        <span class="menu-item-text">Бренды</span>
+      </router-link>
+      <router-link class="menu-button" to="/zhasa-web-admin/sales-types">
+        <img v-if="isActive('sales-types')" src="../../assets/sidebar_active_icon.svg" alt="active icon"/>
+        <img v-if="!isActive('sales-types')" src="../../assets/sidebar_active_icon.svg" alt="active icon" style="opacity: 0"/>
+        <img v-if="isActive('sales-types')" src="../../assets/icon_sales_active.svg" class ="users-tab-icon" alt="users icon">
+        <img v-if="!isActive('sales-types')" src="../../assets/icon_sales.svg" class ="users-tab-icon" alt="users icon">
+        <span class="menu-item-text">Типы продаж</span>
       </router-link>
     </div>
   </aside>
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from 'vue';
-
+import {defineComponent} from 'vue';
+import { useRoute } from 'vue-router';
 export default defineComponent({
   name: 'SideBar',
   setup() {
-    const isFullWidth = ref(true);
-    const handleResize = () => {
-      isFullWidth.value = !isFullWidth.value;
-      console.log(isFullWidth)
+    const route = useRoute();
+
+    const isActive = (path: string) => {
+      // Check if the route's path matches the given path
+      return route.path.includes(path);
     };
 
-    return {
-      isFullWidth,
-      handleResize,
-    };
+    return { isActive };
   },
 });
 </script>
@@ -54,14 +75,14 @@ export default defineComponent({
   }
 }
 
-.users-tab-icon{
-  background: url("../../assets/icon_users_active.svg");
-}
+//.users-tab-icon{
+//  background: url("../../assets/icon_users_active.svg");
+//}
 .menu {
   padding-top: 18px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  //gap: 24px;
 }
 
 .menu-item-text {
@@ -73,6 +94,7 @@ export default defineComponent({
 }
 
 .menu-button {
+  height: 56px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -83,9 +105,6 @@ export default defineComponent({
     .menu-item-text {
       color: #1C1C1E;
       font-weight: 700;
-    }
-    .users-tab-icon{
-      content: url("../../assets/icon_users_1.svg");
     }
   }
 }
