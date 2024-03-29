@@ -1,5 +1,5 @@
 
-export const IS_DEBUG: boolean = true
+export const IS_DEBUG: boolean = false
 
 const DEV_URL: string = 'http://185.182.219.90/admin'
 const PROD_URL: string = 'https://doschamp.doscar.kz/admin'
