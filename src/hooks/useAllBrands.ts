@@ -12,7 +12,11 @@ function useAllBrands() {
 
     const calculateSize = () => {
         const viewportHeight = window.innerHeight;
-        size.value = Math.floor((viewportHeight-310) / rowHeight);
+        if (isMobile()) {
+            size.value = 20
+        } else {
+            size.value = Math.floor((viewportHeight-310) / rowHeight);
+        }
     };
 
     onMounted(() => {
@@ -43,6 +47,14 @@ function useAllBrands() {
             isLoading.value = false;
         }
     };
+
+    const isMobile = () => {
+        if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            return true
+        } else {
+            return false
+        }
+    }
 
     onMounted(() => {
         const initialPage = 1;
