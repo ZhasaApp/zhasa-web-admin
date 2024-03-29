@@ -12,20 +12,8 @@ function useAllUsersWithRoles() {
 
     const calculateSize = () => {
         const viewportHeight = window.innerHeight;
-        if (isMobile()) {
-            size.value = 20
-        } else {
-            size.value = Math.floor((viewportHeight-310) / rowHeight);
-        }
+        size.value = Math.floor((viewportHeight-310) / rowHeight);
     };
-
-    const isMobile = () => {
-        if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            return true
-        } else {
-            return false
-        }
-    }
 
     // Add window resize event listener
     onMounted(() => {
