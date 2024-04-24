@@ -16,6 +16,7 @@
 - `sort_field: string` - sort field name `fio, branch`
 - `sort_type: string` - sort type `asc, desc`
 - `search: string` - searching text
+- `show_deleted: boolean` - show deleted users `true, false`
 
 
 ## Response
