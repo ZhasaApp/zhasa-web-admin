@@ -12,14 +12,14 @@ function useAllUsersWithRoles() {
 
     const calculateSize = () => {
         const viewportHeight = window.innerHeight;
-        size.value = Math.floor((viewportHeight-310) / rowHeight);
+        size.value = Math.floor((viewportHeight - 310) / rowHeight);
     };
 
     // Add window resize event listener
     onMounted(() => {
         calculateSize();
         window.addEventListener('resize', calculateSize);
-        fetching(1, '', [], [], [], undefined); // Initial fetch
+        fetching(1, '', [], [], [], undefined, false); // Initial fetch
     });
 
     onBeforeUnmount(() => {
@@ -30,18 +30,18 @@ function useAllUsersWithRoles() {
     const headers = {
         'Authorization': TOKEN,
     };
-    const fetching = async (page: number, searchValue: string, roleKeys: string[], brandsFilter: string[], branchesFilter: string[], sortState: any): Promise<void> => {
+    const fetching = async (page: number, searchValue: string, roleKeys: string[], brandsFilter: string[], branchesFilter: string[], sortState: any, showDeletedUsers: boolean): Promise<void> => {
         try {
             const roleKeysParams = roleKeys.map(key => `&role_keys=${encodeURIComponent(key)}`).join('&');
             const brandsParams = brandsFilter.map(key => `&brand_ids=${encodeURIComponent(key)}`).join('&');
             const branchesParams = branchesFilter.map(key => `&branch_ids=${encodeURIComponent(key)}`).join('&');
-            const sortParams = (!sortState || sortState.sortState === 'none' ) ? '' : `&sort_field=${sortState.columnName == 'fullName' ? 'fio' : 'branch'}&sort_type=${sortState.sortState}`
+            const sortParams = (!sortState || sortState.sortState === 'none') ? '' : `&sort_field=${sortState.columnName == 'fullName' ? 'fio' : 'branch'}&sort_type=${sortState.sortState}`
             console.log("roleKeysParams=", roleKeysParams)
             console.log("sortParams=", sortParams)
-            const url = `${BASE_URL}/users?page=${page - 1}&size=${size.value}${roleKeysParams}${brandsParams}${branchesParams}${sortParams}&search=${searchValue}`
+            const url = `${BASE_URL}/users?page=${page - 1}&size=${size.value}${roleKeysParams}${brandsParams}${branchesParams}${sortParams}&show_deleted=${showDeletedUsers}&search=${searchValue}`
             console.log("url=", url)
 
-            const response = await axios.get<ResponseType>(url,{headers});
+            const response = await axios.get<ResponseType>(url, {headers});
             users.value = response.data?.result
             totalCount.value = response.data?.count
         } catch (error) {
@@ -54,7 +54,7 @@ function useAllUsersWithRoles() {
 
     onMounted(() => {
         const initialPage = 1;
-        fetching(initialPage, '', [], [], [], undefined);
+        fetching(initialPage, '', [], [], [], undefined, false);
     });
 
     return {

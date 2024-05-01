@@ -16,6 +16,7 @@
         @editBranchClicked="editBranchClicked"
         @deleteUserClicked="deleteUserClicked"
         @toggleAll="toggleAll"
+        @toggleShowDeleted="toggleShowDeleted"
     />
     <TableData
         v-if="!isLoading"
@@ -37,6 +38,8 @@
         @onRoleSelected="onRoleSelected"
         @onUserDelete="onUserDelete"
         @onUserEdit="onUserEdit"
+        :showDeletedUsers="showDeletedUsers"
+        @onUserRestore="onUserRestore"
     />
     <span v-else>Загрузка ...</span>
   </div>
@@ -150,6 +153,7 @@ export default defineComponent({
     const editModalActive = ref(false)
     const selectedEditUser = ref<any>(null)
     const selectedEditUserDefaultOption = ref<any>(null)
+    const showDeletedUsers = ref(false)
 
     watch(selectedUsers, (newVal) => {
       if (newVal.length === usersTableData.value.length && usersTableData.value.length != 0) {
@@ -224,43 +228,50 @@ export default defineComponent({
           ${user.phone.slice(8, 10)} ${user.phone.slice(10)}`,
           branch: `${user.role == "owner" ? '-' : user.branch_title ?? '-'}`,
           brand: `${user.role == "owner" ? '-' : user.brands.join(', ')}`,
-          role: user.role
+          role: user.role,
+          deleted: user.deleted
         };
       });
     });
 
     const initPage = () => {
-      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value, sortState.value)
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value, sortState.value, showDeletedUsers.value)
       selectedUsers.value = [];
     };
     const handleSearch = (value: any) => {
       searchValue.value = value;
     };
     watch(searchValue, (searchValue) => {
-      fetching(1, searchValue, [], [], [], sortState.value)
+      fetching(1, searchValue, [], [], [], sortState.value, showDeletedUsers.value)
       selectedUsers.value = [];
     });
 
     watch(selectedRoles, (selectedRoles) => {
-      fetching(1, searchValue.value, selectedRoles, selectedBrands.value, selectedBranches.value, sortState.value)
+      fetching(1, searchValue.value, selectedRoles, selectedBrands.value, selectedBranches.value, sortState.value, showDeletedUsers.value)
       selectedUsers.value = [];
     });
 
     watch(selectedBrands, (selectedBrands) => {
-      fetching(1, searchValue.value, selectedRoles.value, selectedBrands, selectedBranches.value, sortState.value)
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands, selectedBranches.value, sortState.value, showDeletedUsers.value)
       selectedUsers.value = [];
     });
 
     watch(selectedBranches, (selectedBranches) => {
-      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches, sortState.value)
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches, sortState.value, showDeletedUsers.value)
       selectedUsers.value = [];
     });
 
     const handleSortSelected = (sortState: any) => {
       sortState.value=sortState
-      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value, sortState.value)
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value, sortState.value, showDeletedUsers.value)
       console.log("sortState",sortState)
     }
+
+    const toggleShowDeleted = (show: boolean) => {
+      showDeletedUsers.value = show
+      fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value, sortState.value, showDeletedUsers.value)
+      selectedUsers.value = [];
+    };
 
     const editRoleAction = (data: any) => {
       const requestOptions = {
@@ -305,6 +316,35 @@ export default defineComponent({
     const onUserDelete = (user: any) => {
       deleteItems.value = [user.id]
       deleteModalActive.value = true
+    }
+
+    const onUserRestore = (user: any) => {
+      console.log(user)
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Authorization': TOKEN,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          UserIds: [user.id]
+        })
+      };
+      fetch(`${BASE_URL}/users/activate`, requestOptions)
+          .then(async response => {
+            const isJson = response.headers.get('content-type')?.includes('application/json');
+            const data = isJson && await response.json();
+
+            if (!response.ok) {
+              const error = (data && data.message) || response.status;
+              return Promise.reject(error);
+            }
+            initPage()
+          })
+          .catch(error => {
+            errorMessage.value = error.error;
+            console.error("There was an error!", error);
+          });
     }
 
     const closeDeleteModal = () => {
@@ -636,7 +676,10 @@ export default defineComponent({
       showAlert,
       createUserModalToggler,
       selectedEditUser,
-      selectedEditUserDefaultOption
+      selectedEditUserDefaultOption,
+      toggleShowDeleted,
+      showDeletedUsers,
+      onUserRestore
     }
   },
   watch: {}

@@ -96,6 +96,9 @@
           <span v-if="index === 0" class="innerSpan">Филиалы</span>
         </template>
       </v-select>
+      <ThreeDotUsers
+          @toggleShowDeleted="toggleShowDeleted"
+      />
     </div>
   </div>
 </template>
@@ -103,9 +106,11 @@
 <script lang="ts">
 import {defineComponent, ref, watch} from 'vue';
 import {ROLE_OPTIONS} from "../../utils/Constants.ts";
+import ThreeDotUsers from "./ThreeDotUsers.vue";
 
 export default defineComponent({
   name: 'ActionsBlock',
+  components: {ThreeDotUsers},
   props: {
     branches: Array,
     brands: Array,
@@ -117,6 +122,7 @@ export default defineComponent({
     const selectedBrands = ref([]);
     const selectedBranches = ref([]);
     const allSelected = ref(props.allSelected);
+    const showDeletedUsers = ref(false);
 
     watch(selectedRoles, (newValue) => {
       emit('updateRolesFilter', newValue);
@@ -150,6 +156,9 @@ export default defineComponent({
     const handleDeleteUsers = () => {
       emit('deleteUserClicked');
     };
+    const toggleShowDeleted = (show: boolean) => {
+      emit('toggleShowDeleted', show);
+    };
 
     return {
       selectedRoles,
@@ -161,6 +170,8 @@ export default defineComponent({
       handleEditBranch,
       handleEditBrand,
       handleDeleteUsers,
+      showDeletedUsers,
+      toggleShowDeleted,
       roleOptions: ROLE_OPTIONS
     };
   },

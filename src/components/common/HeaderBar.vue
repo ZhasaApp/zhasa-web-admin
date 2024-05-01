@@ -19,6 +19,7 @@
         @editBranchClicked="handleBranchUpdate"
         @deleteUserClicked="handleDelete"
         @toggleAll="toggleAll"
+        @toggleShowDeleted="toggleShowDeleted"
         :selectedUsers="selectedUsers"
     />
   </div>
@@ -95,6 +96,10 @@ export default defineComponent({
       emit('toggleAll');
     };
 
+    const toggleShowDeleted = (show: boolean) => {
+      emit('toggleShowDeleted', show);
+    };
+
     return {
       inputValue,
       allSelected,
@@ -106,7 +111,8 @@ export default defineComponent({
       handleBrandUpdate,
       handleBranchUpdate,
       toggleAll,
-      handleDelete
+      handleDelete,
+      toggleShowDeleted
     };
   }
 });

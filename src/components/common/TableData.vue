@@ -11,7 +11,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
+      <tr v-for="(row, rowIndex) in tableData" :key="rowIndex" :style="'background: ' + (row.deleted ? '#ffe7e7' : '')">
         <td>
           <v-checkbox
               color="#1CB5C2"
@@ -64,12 +64,19 @@
               </v-btn>
             </template>
             <v-list>
-              <v-list-item @click="handleEdit(rowIndex)">
-                <v-list-item-content style="color: black; font-size: 14px; padding: 0">Редактировать</v-list-item-content>
-              </v-list-item>
-              <v-list-item @click="handleDelete(rowIndex)" color="red">
-                <v-list-item-content style="color: red; font-size: 14px; padding: 0">Удалить</v-list-item-content>
-              </v-list-item>
+              <template v-if="row.deleted">
+                <v-list-item @click="handleRestore(rowIndex)">
+                  <v-list-item-content style="color: dodgerblue; font-size: 14px; padding: 0">Восстановить</v-list-item-content>
+                </v-list-item>
+              </template>
+              <template v-else>
+                <v-list-item @click="handleEdit(rowIndex)">
+                  <v-list-item-content style="color: black; font-size: 14px; padding: 0">Редактировать</v-list-item-content>
+                </v-list-item>
+                <v-list-item @click="handleDelete(rowIndex)">
+                  <v-list-item-content style="color: red; font-size: 14px; padding: 0">Удалить</v-list-item-content>
+                </v-list-item>
+              </template>
             </v-list>
           </v-menu>
         </td>
@@ -84,7 +91,7 @@
             :total="totalCount"
             :default-page-size="size"
             :showSizeChanger="false"
-            @change="$emit('handlePageChange', currentPage, searchValue, filterRoles, filterBrands, filterBranches)"
+            @change="$emit('handlePageChange', currentPage, searchValue, filterRoles, filterBrands, filterBranches, currentSortState, showDeletedUsers)"
         />
       </div>
     </div>
@@ -137,6 +144,9 @@ export default defineComponent({
     filterBranches: Array,
     selectedUsers: {
       type: Array
+    },
+    showDeletedUsers: {
+      type: Boolean
     }
   },
   setup(props, {emit}) {
@@ -156,6 +166,9 @@ export default defineComponent({
     watch(() => props.filterBranches, () => {
       currentPage.value = 1
     })
+    watch(() => props.showDeletedUsers, () => {
+      currentPage.value = 1
+    })
 
     const onRowSelected = (rowIndex: number) => {
       selectedIndex.value = rowIndex
@@ -167,6 +180,10 @@ export default defineComponent({
 
     const handleDelete = (index: number) => {
       emit('onUserDelete', props.tableData[index]);
+    };
+
+    const handleRestore = (index: number) => {
+      emit('onUserRestore', props.tableData[index]);
     };
 
     const toggleSelection = (rowIndex: number) => {
@@ -196,7 +213,8 @@ export default defineComponent({
       onRowSelected,
       handleRole,
       handleSort,
-      currentSortState
+      currentSortState,
+      handleRestore
     }
   }
 });
