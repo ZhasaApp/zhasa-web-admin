@@ -52,7 +52,6 @@ export default defineComponent({
 
 <style scoped>
   .three-dots-users {
-    margin-top: 12px;
   }
   .v-btn--icon {
     width: 24px;

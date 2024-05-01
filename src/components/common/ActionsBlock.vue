@@ -211,6 +211,11 @@ export default defineComponent({
   justify-content: space-between;
 }
 
+.v-text-field {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
 .v-text-field input {
   font-size: 14px;
 }
