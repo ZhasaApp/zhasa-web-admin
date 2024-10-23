@@ -122,12 +122,12 @@ export default defineComponent({
     const headers = {
       'Authorization': TOKEN,
     };
-    fetch(`${BASE_URL}/branches`, {headers})
+    fetch(`${BASE_URL}/branches?page=0&size=9999`, {headers})
         .then(response => response.json())
         .then(data => this.branches = data?.result)
         .catch(error => console.log(error));
 
-    fetch(`${BASE_URL}/brands`, {headers})
+    fetch(`${BASE_URL}/brands?page=0&size=9999`, {headers})
         .then(response => response.json())
         .then(data => this.brands = data?.result)
         .catch(error => console.log(error));
