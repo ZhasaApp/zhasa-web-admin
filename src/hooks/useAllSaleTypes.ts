@@ -32,7 +32,7 @@ function useAllSaleTypes() {
     const fetching = async (page: number, searchValue: string, sortState: any): Promise<void> => {
         try {
             const sortParams = (!sortState || sortState.sortState === 'none' ) ? '' : `&sort_field=title&sort_type=${sortState.sortState}`
-            const url = `${BASE_URL}/sale-types?page=${page - 1}&size=${size.value}${sortParams}&search=${searchValue}`
+            const url = `${BASE_URL}/sale-type/list?page=${page - 1}&size=${size.value}${sortParams}&search=${searchValue}`
 
             const response = await axios.get<ResponseType>(url,{headers});
             saleTypes.value = response.data?.result

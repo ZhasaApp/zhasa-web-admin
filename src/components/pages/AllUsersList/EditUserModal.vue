@@ -22,7 +22,8 @@
               @change="onRoleSelected($event)"
           ></a-select>
         </template>
-        <template v-if="(defaultOption?.role?.length ?? 0) && defaultOption.role != 'owner'">
+        <template v-if="(defaultOption?.role?.length ?? 0) && defaultOption.role != 'owner'
+        && defaultOption.role != 'company_viewer'">
           <a-select
               v-model="selectedBranchId"
               :defaultValue="defaultOption.branchId"
