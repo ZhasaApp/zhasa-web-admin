@@ -8,6 +8,13 @@
 
 ### Request Body
 
+"role" values: 
+- "owner", 
+- "branch_director", 
+- "sales_manager", 
+- "company_viewer", 
+- "branch_viewer"
+
 ```json
 {
   "phone": "+7781070480",

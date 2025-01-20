@@ -131,7 +131,7 @@ export default defineComponent({
       selectedBranchId.value = branchID
       const brandIds = []
       for (let i = 0; i < user.brands.length; i++) {
-        for (let j = 0; j < brands.value.length;  j++) {
+        for (let j = 0; j < brands.value.length; j++) {
           if (user.brands[i] == brands.value[j].title) {
             brandIds.push(brands.value[j].id)
             break;
@@ -163,14 +163,10 @@ export default defineComponent({
     }
 
     const validate = () => {
-      console.log("firstName",firstName.value)
-      console.log("lastName",lastName.value)
-      console.log("telephoneNumber",telephoneNumber.value)
-      console.log("selectedRole",selectedRole.value)
-      console.log("selectedBranchId",selectedBranchId.value)
-      console.log("selectedBrandsIds",selectedBrandsIds.value)
       if (firstName.value.length > 0 && lastName.value.length > 0 && telephoneNumber.value.length == 16 &&
-          selectedRole.value.length > 0 && (selectedRole.value == "owner" ? true : selectedBranchId.value && selectedBrandsIds.value.length > 0)) {
+          selectedRole.value.length > 0 &&
+          ((selectedRole.value == "owner" || selectedRole.value == "company_viewer") ? true
+              : selectedBranchId.value && selectedBrandsIds.value.length > 0)) {
         isAllDataEntered.value = true
       } else isAllDataEntered.value = false
     }
@@ -205,12 +201,6 @@ export default defineComponent({
   },
   methods: {
     onSaveButtonClick(userId: number) {
-      console.log("firstName=", this.firstName)
-      console.log("lastName=", this.lastName)
-      console.log("telephoneNumber=", this.telephoneNumber)
-      console.log("role=", this.selectedRole)
-      console.log("brand_ids=", this.selectedBrandsIds)
-      console.log("branch_id=", this.selectedBranchId)
       this.$emit('editUser', {
         firstName: this.firstName,
         lastName: this.lastName,

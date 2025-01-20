@@ -21,7 +21,7 @@
         ></a-select>
         <a-select
             v-model="selectedBranchId"
-            v-show="selectedRole == 'branch_director' || selectedRole == 'sales_manager'"
+            v-show="selectedRole == 'branch_director' || selectedRole == 'branch_viewer' || selectedRole == 'sales_manager'"
             show-search
             placeholder="Выберите филиал"
             style="width: 100%; margin: 24px auto"
@@ -35,7 +35,7 @@
         <a-select
             v-model="selectedBrandsIds"
             mode="multiple"
-            v-show="selectedRole == 'branch_director' || selectedRole == 'sales_manager'"
+            v-show="selectedRole == 'branch_director' || selectedRole == 'branch_viewer' || selectedRole == 'sales_manager'"
             show-search
             placeholder="Выберите бренд"
             class="selector-with_multiple-select"
@@ -135,7 +135,7 @@ export default defineComponent({
 
     const validate = () => {
       if (firstName.value.length > 0 && lastName.value.length > 0 && telephoneNumber.value.length == 16 &&
-          selectedRole.value.length > 0 && (selectedRole.value == "owner" ? true : selectedBranchId.value && selectedBrandsIds.value.length > 0)) {
+          selectedRole.value.length > 0 && ((selectedRole.value == "owner" || selectedRole.value == "company_viewer") ? true : selectedBranchId.value && selectedBrandsIds.value.length > 0)) {
         isAllDataEntered.value = true
       } else isAllDataEntered.value = false
     }
