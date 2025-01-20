@@ -106,8 +106,8 @@ export default defineComponent({
     const isAllDataEntered = ref(false)
 
     watch(() => props.modalActive, () => {
-      firstName.value ='';
-      lastName.value ='';
+      firstName.value = '';
+      lastName.value = '';
       telephoneNumber.value = '';
       selectedRole.value = '';
       selectedBranchId.value = undefined;

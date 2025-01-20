@@ -262,9 +262,9 @@ export default defineComponent({
     });
 
     const handleSortSelected = (sortState: any) => {
-      sortState.value=sortState
+      sortState.value = sortState
       fetching(1, searchValue.value, selectedRoles.value, selectedBrands.value, selectedBranches.value, sortState.value, showDeletedUsers.value)
-      console.log("sortState",sortState)
+      console.log("sortState", sortState)
     }
 
     const toggleShowDeleted = (show: boolean) => {
