@@ -4,9 +4,9 @@ export interface RoleOption {
 }
 
 export const ROLE_OPTIONS: RoleOption[] = [
-    { text: "Owner", value: "owner" },
-    { text: "РОП", value: "branch_director" },
-    { text: "Менеджер", value: "sales_manager" },
-    { text: "Company Viewer", value: "company_viewer" },
-    { text: "Branch Viewer", value: "branch_viewer" }
+    { text: "Директор", value: "owner" },
+    { text: "Руководитель отдела продаж", value: "branch_director" },
+    { text: "Менеджер по продажам", value: "sales_manager" },
+    { text: "Менеджер компании", value: "company_viewer" },
+    { text: "Менеджер филиала", value: "branch_viewer" }
 ];
