@@ -30,7 +30,7 @@
               item-value="value"
               :placeholder="getRoleText(row.role)"
               variant="outlined"
-              style="width: 150px;"
+              style="width: 200px;"
               @click="onRowSelected(rowIndex)"
           >
             <template v-slot:item="{ item }" style="">
